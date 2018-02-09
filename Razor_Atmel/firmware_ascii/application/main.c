@@ -1,8 +1,8 @@
 /***********************************************************************************************************************
-File: main.c                                                                
+File: main.c
 
 Description:
-Container for the EiE firmware.  
+Container for the EiE firmware.
 ***********************************************************************************************************************/
 
 #include "configuration.h"
@@ -32,7 +32,7 @@ Main Program
 Main has two sections:
 
 1. Initialization which is run once on power-up or reset.  All drivers and applications are setup here without timing
-contraints but must complete execution regardless of success or failure of starting the application. 
+contraints but must complete execution regardless of success or failure of starting the application.
 
 2. Super loop which runs infinitely giving processor time to each application.  The total loop time should not exceed
 1ms of execution time counting all application execution.  SystemSleep() will execute to complete the remaining time in
@@ -58,11 +58,11 @@ void main(void)
   /* Debug messages through DebugPrintf() are available from here */
 
   ButtonInitialize();
-  TimerInitialize();  
+  TimerInitialize();
   SspInitialize();
   TWIInitialize();
   Adc12Initialize();
-  
+
   LcdInitialize();
   LedInitialize();
   AntInitialize();
@@ -71,25 +71,20 @@ void main(void)
 
   /* Application initialization */
 
-  UserApp1Initialize();
-  UserApp2Initialize();
-  UserApp3Initialize();
-
-  
   /* Exit initialization */
   SystemStatusReport();
   G_u32SystemFlags &= ~_SYSTEM_INITIALIZING;
-    
-  /* Super loop */  
+
+  /* Super loop */
   while(1)
   {
     WATCHDOG_BONE();
-    
+
     /* Drivers */
     LedUpdate();
     ButtonRunActiveState();
     UartRunActiveState();
-    TimerRunActiveState(); 
+    TimerRunActiveState();
     SspRunActiveState();
     TWIRunActiveState();
     Adc12RunActiveState();
@@ -101,19 +96,15 @@ void main(void)
     SdCardRunActiveState();
 
     /* Applications */
-    UserApp1RunActiveState();
-    UserApp2RunActiveState();
-    UserApp3RunActiveState();
-    
+
     /* System sleep*/
     HEARTBEAT_OFF();
     SystemSleep();
     HEARTBEAT_ON();
-    
-  } /* end while(1) main super loop */
-  
-} /* end main() */
 
+  } /* end while(1) main super loop */
+
+} /* end main() */
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* End of File */

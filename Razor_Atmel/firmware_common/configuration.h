@@ -1,11 +1,11 @@
 /**********************************************************************************************************************
-File: configuration.h      
+File: configuration.h
 
 Description:
-Main configuration header file for project.  This file bridges many of the generic features of the 
+Main configuration header file for project.  This file bridges many of the generic features of the
 firmware to the specific features of the design. The definitions should be updated
-to match the target hardware.  
- 
+to match the target hardware.
+
 Bookmarks:
 !!!!! External module peripheral assignments
 @@@@@ GPIO board-specific parameters
@@ -56,9 +56,9 @@ Includes
 #include "ant.h"
 #include "ant_api.h"
 #include "buttons.h"
-#include "leds.h" 
+#include "leds.h"
 #include "messaging.h"
-#include "timer.h" 
+#include "timer.h"
 
 #include "sam3u_i2c.h"
 #include "sam3u_ssp.h"
@@ -88,10 +88,6 @@ Includes
 /* Common application header files */
 #include "debug.h"
 #include "music.h"
-#include "user_app1.h"
-#include "user_app2.h"
-#include "user_app3.h"
-
 
 /**********************************************************************************************************************
 !!!!! External peripheral assignments
@@ -214,10 +210,10 @@ Includes
 @@@@@ GPIO board-specific parameters
 ***********************************************************************************************************************/
 /*----------------------------------------------------------------------------------------------------------------------
-%LED% LED Configuration                                                                                                  
+%LED% LED Configuration
 ------------------------------------------------------------------------------------------------------------------------
 Update the values below for the LEDs on the board.  Any name can be used for the LED definitions.
-Open the LED source.c and edit Led_au32BitPositions and Leds_asLedArray with the correct values for the LEDs in the system.  
+Open the LED source.c and edit Led_au32BitPositions and Leds_asLedArray with the correct values for the LEDs in the system.
 */
 
 #ifdef EIE1
@@ -237,11 +233,11 @@ Open the LED source.c and edit Led_au32BitPositions and Leds_asLedArray with the
 
 
 /*----------------------------------------------------------------------------------------------------------------------
-%BUTTON% Button Configuration                                                                                                  
+%BUTTON% Button Configuration
 ------------------------------------------------------------------------------------------------------------------------
 Update the values below for the buttons on the board.  Any name can be used for the BUTTON definitions.
 Open buttons.c and edit the GPIO definitions sections with the bit numbers for the buttons.
-The order of the definitions below must match the order of the definitions provided in buttons.c. 
+The order of the definitions below must match the order of the definitions provided in buttons.c.
 */
 
 #ifdef EIE1
@@ -272,7 +268,7 @@ The order of the definitions below must match the order of the definitions provi
 
 
 /*----------------------------------------------------------------------------------------------------------------------
-%BUZZER% Buzzer Configuration                                                                                                  
+%BUZZER% Buzzer Configuration
 ------------------------------------------------------------------------------------------------------------------------
 EIE1 has two buzzers, MPG2 only has one */
 
@@ -284,7 +280,7 @@ EIE1 has two buzzers, MPG2 only has one */
 
 
 /*----------------------------------------------------------------------------------------------------------------------
-%ADC% Analog input channel Configuration                                                                                                  
+%ADC% Analog input channel Configuration
 ------------------------------------------------------------------------------------------------------------------------
 Available analog channels are defined here.  The names in the arrays come from
 the board-specific definition header file in section !!!!! GPIO pin names
@@ -298,17 +294,17 @@ the board-specific definition header file in section !!!!! GPIO pin names
 #endif /* MPGL2 */
 
 /*----------------------------------------------------------------------------------------------------------------------
-%ANT% Interface Configuration                                                                                                  
+%ANT% Interface Configuration
 ------------------------------------------------------------------------------------------------------------------------
 Board-specific ANT definitions are kept here
 */
-#define ANT_SSP_FLAGS           G_u32Ssp2ApplicationFlags 
+#define ANT_SSP_FLAGS           G_u32Ssp2ApplicationFlags
 
-#define ANT_MRDY_READ_REG      (AT91C_BASE_PIOB->PIO_ODSR & PB_23_ANT_MRDY) 
-#define ANT_MRDY_CLEAR_REG     (AT91C_BASE_PIOB->PIO_CODR = PB_23_ANT_MRDY)     
+#define ANT_MRDY_READ_REG      (AT91C_BASE_PIOB->PIO_ODSR & PB_23_ANT_MRDY)
+#define ANT_MRDY_CLEAR_REG     (AT91C_BASE_PIOB->PIO_CODR = PB_23_ANT_MRDY)
 #define ANT_MRDY_SET_REG       (AT91C_BASE_PIOB->PIO_SODR = PB_23_ANT_MRDY)
 
-#define ANT_SRDY_CLEAR_REG     (AT91C_BASE_PIOB->PIO_CODR = PB_24_ANT_SRDY)            
+#define ANT_SRDY_CLEAR_REG     (AT91C_BASE_PIOB->PIO_CODR = PB_24_ANT_SRDY)
 #define ANT_SRDY_SET_REG       (AT91C_BASE_PIOB->PIO_SODR = PB_24_ANT_SRDY)
 
 #define ANT_RESET_CLEAR_REG    (AT91C_BASE_PIOB->PIO_CODR = PB_21_ANT_RESET)
@@ -322,7 +318,7 @@ Board-specific ANT definitions are kept here
 ##### Communication peripheral board-specific parameters
 ***********************************************************************************************************************/
 /*----------------------------------------------------------------------------------------------------------------------
-%UART%  Configuration                                                                                                  
+%UART%  Configuration
 ----------------------------------------------------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -670,13 +666,13 @@ Set FP = 0, CD = 26 = 0x1A
 
 
 /*----------------------------------------------------------------------------------------------------------------------
-%SSP%  Configuration                                                                                                  
+%SSP%  Configuration
 ----------------------------------------------------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------------------------------------------------
 LCD USART Setup in SSP mode
 
-SPI mode to communicate with an SPI LCD screen. 
+SPI mode to communicate with an SPI LCD screen.
 */
 /* USART Control Register - Page 734 */
 #define LCD_US_CR_INIT (u32)0x00000060
@@ -802,7 +798,7 @@ SPI mode to communicate with an SPI LCD screen.
 #define LCD_US_IDR_INIT (u32)~LCD_US_IER_INIT
 
 /* USART Baud Rate Generator Register - Page 752
-BAUD = MCK / CD 
+BAUD = MCK / CD
 => CD = MCK / BAUD
 BAUD desired = 1 Mbps
 => CD = 48
@@ -840,7 +836,7 @@ BAUD desired = 1 Mbps
 
 /*----------------------------------------------------------------------------------------------------------------------
 ANT USART Setup in SSP
-SPI slave mode to communicate with an ANT device. 
+SPI slave mode to communicate with an ANT device.
 */
 /* USART Control Register - Page 734 */
 #define ANT_US_CR_INIT (u32)0x00000050
@@ -936,7 +932,7 @@ SPI slave mode to communicate with an ANT device.
     21 [0] "
     20 [0] "
 
-    19 [1] CTSIC Clear to Send Change interrupt enabled 
+    19 [1] CTSIC Clear to Send Change interrupt enabled
     18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
     17 [0] DSRIC Data Set Ready Change interrupt not enabled
     16 [0] RIIC Ring Inidicator Change interrupt not enabled
@@ -944,7 +940,7 @@ SPI slave mode to communicate with an ANT device.
     15 [0] Reserved
     14 [0] "
     13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled 
+    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled
 
     11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
     10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
@@ -954,29 +950,29 @@ SPI slave mode to communicate with an ANT device.
     07 [0] PARE Parity Error interrupt not enabled
     06 [0] FRAME Framing Error interrupt not enabled
     05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt not enabled 
+    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt not enabled
 
     03 [0] ENDRX End of Receiver Transfer (PDC) interrupt not enabled
     02 [0] RXBRK Break Received interrupt not enabled
     01 [0] TXRDY Transmitter Ready interrupt not enabled YET
-    00 [0] RXRDY Receiver Ready interrupt enabled 
+    00 [0] RXRDY Receiver Ready interrupt enabled
 */
 
 /* USART Interrupt Disable Register - Page 743 */
 #define ANT_US_IDR_INIT (u32)~ANT_US_IER_INIT
 
 /* USART Baud Rate Generator Register - Page 752
-!!!!! Not applicable for slave (note that incoming clock cannot 
+!!!!! Not applicable for slave (note that incoming clock cannot
 exceed MCLK/6 = 8MHz.  To date, ANT devices communicate at 500kHz
 or 2MHz, so no issues.
 */
-#define ANT_US_BRGR_INIT (u32)0x00000000  
+#define ANT_US_BRGR_INIT (u32)0x00000000
 
 
 /*----------------------------------------------------------------------------------------------------------------------
 SD USART Setup in SSP mode
 
-SPI mode to communicate with an SPI SD card. 
+SPI mode to communicate with an SPI SD card.
 */
 /* USART Control Register - Page 734 */
 #define SD_US_CR_INIT (u32)0x00000050
@@ -1102,7 +1098,7 @@ SPI mode to communicate with an SPI SD card.
 #define SD_US_IDR_INIT (u32)~SD_US_IER_INIT
 
 /* USART Baud Rate Generator Register - Page 752
-BAUD = MCK / CD 
+BAUD = MCK / CD
 => CD = MCK / BAUD
 BAUD desired = 1 Mbps
 => CD = 48
@@ -1165,7 +1161,7 @@ I²C Master mode for ASCII LCD communication
 #define TWI0_MMR_INIT (u32)0x00000000
 /*
     31-24 [0] Reserved
-    
+
     23 [0] Reserved
     22 [0] DADR - device slave address - start with zero
     21 [0] "
@@ -1190,18 +1186,18 @@ I²C Master mode for ASCII LCD communication
 */
 
 /* Clock Wave Generator Register */
-/* 
+/*
     Calculation:
         T_low = ((CLDIV * (2^CKDIV))+4) * T_MCK
         T_high = ((CHDIV * (2^CKDIV))+4) * T_MCK
 
         T_MCK - period of master clock = 1/(48 MHz)
         T_low/T_high - period of the low and high signals
-        
+
         CKDIV = 2, CHDIV and CLDIV = 59
         T_low/T_high = 2.5 microseconds
 
-        Data frequency - 
+        Data frequency -
         f = ((T_low + T_high)^-1)
         f = 200000 Hz 0r 200 kHz
 
@@ -1214,7 +1210,7 @@ I²C Master mode for ASCII LCD communication
 #define TWI0_CWGR_INIT (u32)0x00021D1D
 /*
     31-20 [0] Reserved
-    
+
     19 [0] Reserved
     18 [0] CKDIV
     17 [1] "

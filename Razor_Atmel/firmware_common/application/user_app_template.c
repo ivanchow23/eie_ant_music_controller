@@ -1,5 +1,5 @@
 /**********************************************************************************************************************
-File: user_app1.c                                                                
+File: user_app1.c
 
 ----------------------------------------------------------------------------------------------------------------------
 To start a new task using this user_app1 as a template:
@@ -15,51 +15,42 @@ To start a new task using this user_app1 as a template:
 10. Delete this text (between the dashed lines) and update the Description below to describe your task
 ----------------------------------------------------------------------------------------------------------------------
 
-Description:
-This is a user_app1.c file template 
+Description: This is a user_app1.c file template
 
 ------------------------------------------------------------------------------------------------------------------------
 API:
 
 Public functions:
+  - void UserApp1Initialize(void)
+      Runs required initialzation for the task.  Should only be called once in main init section.
 
-
-Protected System functions:
-void UserApp1Initialize(void)
-Runs required initialzation for the task.  Should only be called once in main init section.
-
-void UserApp1RunActiveState(void)
-Runs current task state.  Should only be called once in main loop.
-
+  - void UserApp1RunActiveState(void)
+      Runs current task state.  Should only be called once in main loop.
 
 **********************************************************************************************************************/
 
 #include "configuration.h"
 
 /***********************************************************************************************************************
-Global variable definitions with scope across entire project.
-All Global variable names shall start with "G_UserApp1"
+Existing variables (defined in other files -- should all contain the "extern" keyword)
 ***********************************************************************************************************************/
-/* New variables */
-volatile u32 G_u32UserApp1Flags;                       /* Global state flags */
+extern volatile u32 G_u32SystemFlags;           /* From main.c */
+extern volatile u32 G_u32ApplicationFlags;      /* From main.c */
 
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Existing variables (defined in other files -- should all contain the "extern" keyword) */
-extern volatile u32 G_u32SystemFlags;                  /* From main.c */
-extern volatile u32 G_u32ApplicationFlags;             /* From main.c */
-
-extern volatile u32 G_u32SystemTime1ms;                /* From board-specific source file */
-extern volatile u32 G_u32SystemTime1s;                 /* From board-specific source file */
-
+extern volatile u32 G_u32SystemTime1ms;         /* From board-specific source file */
+extern volatile u32 G_u32SystemTime1s;          /* From board-specific source file */
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
 Variable names shall start with "UserApp1_" and be declared as static.
 ***********************************************************************************************************************/
-static fnCode_type UserApp1_StateMachine;            /* The state machine function pointer */
-//static u32 UserApp1_u32Timeout;                      /* Timeout counter used across states */
+static fnCode_type UserApp1_StateMachine;       /* The state machine function pointer */
 
+/***********************************************************************************************************************
+State Machine Declarations
+***********************************************************************************************************************/
+static void UserApp1SM_Idle(void);
+static void UserApp1SM_Error(void);
 
 /**********************************************************************************************************************
 Function Definitions
@@ -69,25 +60,14 @@ Function Definitions
 /* Public functions                                                                                                   */
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Protected functions                                                                                                */
-/*--------------------------------------------------------------------------------------------------------------------*/
-
 /*--------------------------------------------------------------------------------------------------------------------
 Function: UserApp1Initialize
 
 Description:
-Initializes the State Machine and its variables.
-
-Requires:
-  -
-
-Promises:
-  - 
+  Initializes the State Machine and its variables.
 */
 void UserApp1Initialize(void)
 {
- 
   /* If good initialization, set state to Idle */
   if( 1 )
   {
@@ -98,35 +78,24 @@ void UserApp1Initialize(void)
     /* The task isn't properly initialized, so shut it down and don't run */
     UserApp1_StateMachine = UserApp1SM_Error;
   }
+}
 
-} /* end UserApp1Initialize() */
-
-  
 /*----------------------------------------------------------------------------------------------------------------------
-Function UserApp1RunActiveState()
+Function: UserApp1RunActiveState()
 
 Description:
-Selects and runs one iteration of the current state in the state machine.
-All state machines have a TOTAL of 1ms to execute, so on average n state machines
-may take 1ms / n to execute.
-
-Requires:
-  - State machine function pointer points at current state
-
-Promises:
-  - Calls the function to pointed by the state machine function pointer
+  Selects and runs one iteration of the current state in the state machine.
+  All state machines have a TOTAL of 1ms to execute, so on average n state machines
+  may take 1ms / n to execute.
 */
 void UserApp1RunActiveState(void)
 {
   UserApp1_StateMachine();
-
-} /* end UserApp1RunActiveState */
-
+}
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Private functions                                                                                                  */
 /*--------------------------------------------------------------------------------------------------------------------*/
-
 
 /**********************************************************************************************************************
 State Machine Function Definitions
@@ -137,18 +106,11 @@ State Machine Function Definitions
 static void UserApp1SM_Idle(void)
 {
 
-} /* end UserApp1SM_Idle() */
-    
+}
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */
-static void UserApp1SM_Error(void)          
+static void UserApp1SM_Error(void)
 {
-  
-} /* end UserApp1SM_Error() */
 
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* End of File                                                                                                        */
-/*--------------------------------------------------------------------------------------------------------------------*/
+}
