@@ -1,0 +1,31 @@
+ANT Wireless Music Controller Requirements
+
+EiE Board Requirements:
+  - Able to fit at least 3 tunes on board
+  - Does not require ANT to be paired right away 
+  - Buttons can:
+    -> One button: Play / Pause
+    -> One button: Previous song
+    -> One button: Next song
+  - LCD screen shows:
+    -> Song and artist name (scrolling if name does not fit)
+    -> Icons are shown, such as:
+        -> ANT channel established
+    -> LED colours light up when tone is played
+        -> Can be systematic or random - as long as it looks nice
+
+EiE Board Optional Requirements:
+    -> Last button: DJ mode
+        -> Buzzers emit constant tone until CIQ app makes it do something
+    -> LCD screen shows if "DJ mode" is enabled
+
+CIQ Requirements:
+  - Dedicated app on a Garmin smartwatch
+  - Requires ANT channel to be formed before app can be used
+  - Has basic functionality:
+       ->  Can play / pause, and go to previous / next song
+  - UI with nice music symbols (not menu items)
+        
+CIQ Optional Requirements:
+  - DJ mode 
+    -> Use watch's accelerometer to change pitch / frequencies / something
