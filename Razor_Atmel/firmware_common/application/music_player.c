@@ -78,7 +78,7 @@ Description:
 */
 void MusicPlayerInitialize(void)
 {
-  MusicPlayer_StateMachine = MusicPlayerSM_Play;
+  MusicPlayer_StateMachine = MusicPlayerSM_Pause;
 }
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -249,12 +249,29 @@ static void MusicPlayerSM_Play(void)
 {
   // Play the next note
   PlayNote();
+
+  // Button 0 pauses the music
+  if( WasButtonPressed( BUTTON0 ) )
+  {
+    ButtonAcknowledge( BUTTON0 );
+    MusicPlayer_StateMachine = MusicPlayerSM_Pause;
+  }
 }
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Turns buzzers off, and waits for prompt to go back to play. */
 static void MusicPlayerSM_Pause(void)
 {
+  // Turn buzzers off
+  PWMAudioOff( BUZZER1 );
+  PWMAudioOff( BUZZER2 );
+
+  // Button 0 plays music again
+  if( WasButtonPressed( BUTTON0 ) )
+  {
+    ButtonAcknowledge( BUTTON0 );
+    MusicPlayer_StateMachine = MusicPlayerSM_Play;
+  }
 }
 
 /*-------------------------------------------------------------------------------------------------------------------*/
