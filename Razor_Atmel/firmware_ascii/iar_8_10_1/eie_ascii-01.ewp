@@ -2200,6 +2200,9 @@
             <file>
                 <name>$PROJ_DIR$\..\..\firmware_common\application\music.h</name>
             </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\firmware_common\application\music_player.h</name>
+            </file>
         </group>
         <group>
             <name>Source</name>
@@ -2208,6 +2211,9 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\application\main.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\firmware_common\application\music_player.c</name>
             </file>
         </group>
     </group>

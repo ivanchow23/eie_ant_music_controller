@@ -70,6 +70,7 @@ void main(void)
   SdCardInitialize();
 
   /* Application initialization */
+  MusicPlayerInitialize();
 
   /* Exit initialization */
   SystemStatusReport();
@@ -96,6 +97,7 @@ void main(void)
     SdCardRunActiveState();
 
     /* Applications */
+    MusicPlayerRunActiveState();
 
     /* System sleep*/
     HEARTBEAT_OFF();
