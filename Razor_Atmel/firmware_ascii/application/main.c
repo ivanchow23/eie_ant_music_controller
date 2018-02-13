@@ -70,6 +70,7 @@ void main(void)
   SdCardInitialize();
 
   /* Application initialization */
+  AntChannelInitialize();
   MusicPlayerInitialize();
 
   /* Exit initialization */
@@ -97,6 +98,7 @@ void main(void)
     SdCardRunActiveState();
 
     /* Applications */
+    AntChannelRunActiveState();
     MusicPlayerRunActiveState();
 
     /* System sleep*/

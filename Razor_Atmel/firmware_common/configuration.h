@@ -88,6 +88,7 @@ Includes
 /* Common application header files */
 #include "debug.h"
 #include "music.h"
+#include "ant_channel.h"
 #include "music_player.h"
 
 /**********************************************************************************************************************
