@@ -21,15 +21,16 @@ Constants / Definitions
 ***********************************************************************************************************************/
 #define ANT_CHANNEL_NUMBER              ANT_CHANNEL_0
 #define ANT_CHANNEL_TYPE                CHANNEL_TYPE_SLAVE
-#define ANT_CHANNEL_PERIOD_LO_BYTE      (u8)( 0x00 )
+#define ANT_CHANNEL_PERIOD_LO_BYTE      (u8)( 0x00 )  /* Interpret as: 0x<LO_BYTE><HI_BYTE> */
 #define ANT_CHANNEL_PERIOD_HI_BYTE      (u8)( 0x20 )
-#define ANT_CHANNEL_DEVICE_ID_LO_BYTE   (u8)( 0x90 )
-#define ANT_CHANNEL_DEVICE_ID_HI_BYTE   (u8)( 0x70 )
+#define ANT_CHANNEL_DEVICE_ID_LO_BYTE   (u8)( 0x70 )  /* Interpret as: 0x<HI_BYTE><LO_BYTE> */
+#define ANT_CHANNEL_DEVICE_ID_HI_BYTE   (u8)( 0x90 )
+#define ANT_CHANNEL_DEVICE_TYPE         (u8)( 15 )
 #define ANT_CHANNEL_TRANSMISSION_TYPE   (u8)( 77 )
 #define ANT_CHANNEL_RADIO_FREQUENCY     (u8)( 66 )
 #define ANT_CHANNEL_TX_POWER            RADIO_TX_POWER_4DBM
 
-#define ANT_CHANNEL_INITIAL_DELAY_MS    100
+#define ANT_CHANNEL_INITIAL_DELAY_MS    500
 #define ANT_CHANNEL_OPEN_TIMEOUT_MS     2000
 
 /***********************************************************************************************************************
@@ -37,6 +38,9 @@ Existing variables (defined in other files -- should all contain the "extern" ke
 ***********************************************************************************************************************/
 extern volatile u32 G_u32SystemTime1ms;         /* From board-specific source file */
 extern volatile u32 G_u32SystemTime1s;          /* From board-specific source file */
+
+/* From ANT API */
+extern u8 G_au8AntApiCurrentMessageBytes[ANT_APPLICATION_MESSAGE_BYTES];
 
 /**********************************************************************************************************************
 Type Definitions
@@ -87,6 +91,7 @@ void AntChannelInitialize(void)
   channel_info.AntChannelPeriodHi  = ANT_CHANNEL_PERIOD_HI_BYTE;
   channel_info.AntDeviceIdLo       = ANT_CHANNEL_DEVICE_ID_LO_BYTE;
   channel_info.AntDeviceIdHi       = ANT_CHANNEL_DEVICE_ID_HI_BYTE;
+  channel_info.AntDeviceType       = ANT_CHANNEL_DEVICE_TYPE;
   channel_info.AntTransmissionType = ANT_CHANNEL_TRANSMISSION_TYPE;
   channel_info.AntFrequency        = ANT_CHANNEL_RADIO_FREQUENCY;
   channel_info.AntTxPower          = ANT_CHANNEL_TX_POWER;
@@ -197,6 +202,10 @@ static void AntChannelSM_ChannelOpen(void)
   }
 
   // TODO: IC - Handle incoming ANT messages here
+  if( AntReadAppMessageBuffer() )
+  {
+    DebugPrintf( "Rx'ed something...\r\n" );
+  }
 }
 
 /*-------------------------------------------------------------------------------------------------------------------*/
