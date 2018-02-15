@@ -27,6 +27,7 @@ Constants / Definitions
 #define ANT_CHANNEL_RADIO_FREQUENCY     (u8)( 66 )
 #define ANT_CHANNEL_TX_POWER            RADIO_TX_POWER_4DBM
 
+#define ANT_CHANNEL_INITIAL_DELAY_MS    100
 #define ANT_CHANNEL_OPEN_TIMEOUT_MS     2000
 
 /***********************************************************************************************************************
@@ -42,9 +43,10 @@ Type Definitions
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
 ***********************************************************************************************************************/
-static fnCode_type AntChannel_StateMachine;    /* The state machine function pointer */
+static fnCode_type AntChannel_StateMachine;     /* The state machine function pointer */
 
-static AntAssignChannelInfoType channel_info;  /* Structure holding ANT channel configuration information */
+static AntAssignChannelInfoType channel_info;   /* Structure holding ANT channel configuration information */
+static u32 ant_channel_initial_delay_timer = 0;
 static u32 ant_channel_open_timer = 0;
 
 /***********************************************************************************************************************
@@ -54,6 +56,7 @@ Local functions
 /***********************************************************************************************************************
 State Machine Declarations
 ***********************************************************************************************************************/
+static void AntChannelSM_InitialDelay(void);
 static void AntChannelSM_Idle(void);
 static void AntChannelSM_WaitChannelOpen(void);
 static void AntChannelSM_ChannelOpen(void);
@@ -94,8 +97,11 @@ void AntChannelInitialize(void)
   // Attempt to configure channel
   if( AntAssignChannel( &channel_info ) )
   {
+    // Delay to allow time for ANT channel to be configured before opening
+    ant_channel_initial_delay_timer = G_u32SystemTime1ms;
+
     DebugPrintf( "ANT channel configured\r\n" );
-    AntChannel_StateMachine = AntChannelSM_Idle;
+    AntChannel_StateMachine = AntChannelSM_InitialDelay;
   }
   else
   {
@@ -126,6 +132,17 @@ void AntChannelRunActiveState(void)
 /**********************************************************************************************************************
 State Machine Function Definitions
 **********************************************************************************************************************/
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* Initial delay state to allow ANT channel time to configure before opening */
+static void AntChannelSM_InitialDelay(void)
+{
+  if( IsTimeUp( &ant_channel_initial_delay_timer, ANT_CHANNEL_INITIAL_DELAY_MS ) )
+  {
+    AntChannel_StateMachine = AntChannelSM_Idle;
+  }
+}
+
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Attempts to open an ANT channel */
 static void AntChannelSM_Idle(void)
