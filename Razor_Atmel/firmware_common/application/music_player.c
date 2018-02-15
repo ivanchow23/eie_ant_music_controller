@@ -1,6 +1,8 @@
 /**********************************************************************************************************************
 File: music_player.c
 Description: Module that is responsible for controlling the buzzers for playing music.
+Author: Ivan Chow
+Date: February 9, 2018
 ------------------------------------------------------------------------------------------------------------------------
 API:
 

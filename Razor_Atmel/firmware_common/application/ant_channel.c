@@ -1,6 +1,8 @@
 /**********************************************************************************************************************
 File: ant_channel.c
 Description: Module that is responsible for opening an ANT channel to communicate with a master device.
+Author: Ivan Chow
+Date: February 12, 2018
 ------------------------------------------------------------------------------------------------------------------------
 API:
 
