@@ -71,6 +71,7 @@ void main(void)
 
   /* Application initialization */
   AntChannelInitialize();
+  LcdControlInitialize();
   MusicPlayerInitialize();
 
   /* Exit initialization */
@@ -99,6 +100,7 @@ void main(void)
 
     /* Applications */
     AntChannelRunActiveState();
+    LcdControlRunActiveState();
     MusicPlayerRunActiveState();
 
     /* System sleep*/

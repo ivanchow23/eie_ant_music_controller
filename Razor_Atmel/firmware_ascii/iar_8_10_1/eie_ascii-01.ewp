@@ -2198,6 +2198,9 @@
                 <name>$PROJ_DIR$\..\..\firmware_common\application\debug.h</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\..\..\firmware_common\application\lcd_control.h</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\application\main.h</name>
             </file>
             <file>
@@ -2214,6 +2217,9 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\firmware_common\application\debug.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\firmware_common\application\lcd_control.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\application\main.c</name>

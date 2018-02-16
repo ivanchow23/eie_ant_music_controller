@@ -89,6 +89,7 @@ Includes
 #include "debug.h"
 #include "music.h"
 #include "ant_channel.h"
+#include "lcd_control.h"
 #include "music_player.h"
 
 /**********************************************************************************************************************
