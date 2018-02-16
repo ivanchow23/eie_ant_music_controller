@@ -15,6 +15,7 @@ Public functions:
 **********************************************************************************************************************/
 
 #include "configuration.h"
+#include <stdio.h>
 
 /***********************************************************************************************************************
 Constants / Definitions
@@ -40,6 +41,7 @@ extern volatile u32 G_u32SystemTime1ms;         /* From board-specific source fi
 extern volatile u32 G_u32SystemTime1s;          /* From board-specific source file */
 
 /* From ANT API */
+extern AntApplicationMessageType G_eAntApiCurrentMessageClass;
 extern u8 G_au8AntApiCurrentMessageBytes[ANT_APPLICATION_MESSAGE_BYTES];
 
 /**********************************************************************************************************************
@@ -58,6 +60,7 @@ static u32 ant_channel_open_timer = 0;
 /***********************************************************************************************************************
 Local functions
 ***********************************************************************************************************************/
+static void AntMessageBytesToString(char* output_string, u8 max_size);
 
 /***********************************************************************************************************************
 State Machine Declarations
@@ -135,6 +138,19 @@ void AntChannelRunActiveState(void)
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Private functions                                                                                                  */
 /*--------------------------------------------------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* Converts the current contents of the ANT message to a formatted string */
+static void AntMessageBytesToString(char* output_string, u8 max_size)
+{
+  u8 buf_index = 0;
+
+  for( u8 i = 0; i < ANT_APPLICATION_MESSAGE_BYTES; i++ )
+  {
+    buf_index += snprintf( &output_string[buf_index], max_size, "%X ", G_au8AntApiCurrentMessageBytes[i] );
+  }
+
+  output_string[buf_index] = '\0';
+}
 
 /**********************************************************************************************************************
 State Machine Function Definitions
@@ -201,10 +217,17 @@ static void AntChannelSM_ChannelOpen(void)
     AntChannel_StateMachine = AntChannelSM_ChannelClosing;
   }
 
-  // TODO: IC - Handle incoming ANT messages here
   if( AntReadAppMessageBuffer() )
   {
-    DebugPrintf( "Rx'ed something...\r\n" );
+    if( G_eAntApiCurrentMessageClass == ANT_DATA )
+    {
+      char byte_string[50];
+
+      AntMessageBytesToString( byte_string, 50 );
+      DebugPrintf( "Rx'ed: " );
+      DebugPrintf( byte_string );
+      DebugLineFeed();
+    }
   }
 }
 
