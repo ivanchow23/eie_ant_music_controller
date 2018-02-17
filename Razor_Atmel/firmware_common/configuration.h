@@ -91,6 +91,7 @@ Includes
 #include "ant_channel.h"
 #include "lcd_control.h"
 #include "music_player.h"
+#include "version.h"
 
 /**********************************************************************************************************************
 !!!!! External peripheral assignments
