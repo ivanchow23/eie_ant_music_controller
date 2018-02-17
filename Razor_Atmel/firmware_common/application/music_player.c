@@ -12,6 +12,15 @@ Public functions:
 
   - void MusicPlayerRunActiveState(void)
       Runs current task state. Should only be called once in main loop.
+
+  - u8 MusicPlayerGetCurrentSongIndex(void)
+      Returns the index of the song currently playing
+
+  - const char* MusicPlayerGetCurrentSongTitle(void)
+      Returns a pointer to the title string of the song currently playing
+
+  - const char* MusicPlayerGetCurrentSongArtist(void)
+      Returns a pointer to the artist string of the song currently playing
 **********************************************************************************************************************/
 
 #include "configuration.h"
@@ -121,6 +130,39 @@ Description:
 void MusicPlayerRunActiveState(void)
 {
   MusicPlayer_StateMachine();
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+Function: MusicPlayerGetCurrentSongIndex
+
+Description:
+  Returns the current song index.
+*/
+u8 MusicPlayerGetCurrentSongIndex(void)
+{
+  return current_song_index;
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+Function: MusicPlayerGetCurrentSongTitle
+
+Description:
+  Returns the title of the current song.
+*/
+const char* MusicPlayerGetCurrentSongTitle(void)
+{
+  return song_list[current_song_index]->title;
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+Function: MusicPlayerGetCurrentSongArtist
+
+Description:
+  Returns the title of the current artist.
+*/
+const char* MusicPlayerGetCurrentSongArtist(void)
+{
+  return song_list[current_song_index]->artist;
 }
 
 /*--------------------------------------------------------------------------------------------------------------------*/
