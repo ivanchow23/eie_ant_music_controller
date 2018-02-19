@@ -118,11 +118,21 @@ static void SetNewTitleString(void)
   // Store the current song and artist as a string in the title buffer
   buf_index += snprintf( lcd_state.title_buffer, TITLE_BUFFER_SIZE, "%s - %s", MusicPlayerGetCurrentSongTitle(), MusicPlayerGetCurrentSongArtist() );
 
-  // Pad the end with spaces if the string is larger than LCD screen so we can use a scrolling effect
+  // If string is larger than LCD size, pad end with fixed number of spaces for a scrolling effect
   if( buf_index > LCD_MAX_LINE_DISPLAY_SIZE )
   {
     u8 space_pad[] = "     ";
     buf_index += snprintf( &lcd_state.title_buffer[buf_index], TITLE_BUFFER_SIZE, "%s", space_pad );
+  }
+  // If string is smaller than LCD size, pad end with spaces until it fills the display
+  else
+  {
+    u8 num_space_pads = LCD_MAX_LINE_DISPLAY_SIZE - buf_index;
+
+    for( u8 i = 0; i < num_space_pads; i++ )
+    {
+      buf_index += snprintf( &lcd_state.title_buffer[buf_index], TITLE_BUFFER_SIZE, "%s", " " );
+    }
   }
 
   // Update variables for tracking which part of the string to show on LCD
