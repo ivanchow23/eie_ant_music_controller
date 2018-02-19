@@ -25,6 +25,11 @@ Public functions:
 
 #include "configuration.h"
 
+/**********************************************************************************************************************
+Constants / Definitions
+**********************************************************************************************************************/
+#define SONG_LIST_SIZE  ( sizeof( song_list ) / sizeof( song_list[0] ) )
+
 /***********************************************************************************************************************
 Existing variables (defined in other files -- should all contain the "extern" keyword)
 ***********************************************************************************************************************/
@@ -97,9 +102,8 @@ static const SongInfoType song3 = { "Song #3", "Placeholder",
 static const SongInfoType* song_list[] = { &song1, &song2, &song3 };
 
 /* Index of the current song */
-static u8 current_song_index = 1;
+static u8 current_song_index = 0;
 
-// TODO: IC - need a function that resets these variables when song is changed
 /* Right buzzer variables */
 static u8 u8_index_right = 0;
 static u32 u32_right_timer = 0;
@@ -118,6 +122,9 @@ static bool b_note_active_next_left = TRUE;
 Local functions
 ***********************************************************************************************************************/
 static void PlayNote(void);
+static void ResetBuzzerVariables(void);
+static void PreviousSong(void);
+static void NextSong(void);
 
 /***********************************************************************************************************************
 State Machine Declarations
@@ -142,6 +149,7 @@ Description:
 */
 void MusicPlayerInitialize(void)
 {
+  ResetBuzzerVariables();
   MusicPlayer_StateMachine = MusicPlayerSM_Pause;
 }
 
@@ -336,6 +344,80 @@ static void PlayNote(void)
   } // end if(IsTimeUp(&u32_left_timer, (u32)u16_current_duration_left))
 }
 
+/*----------------------------------------------------------------------------------------------------------------------
+Function: ResetBuzzerVariables
+
+Description:
+  Resets variables for the buzzer.
+  Called when a song is switched, or on initialization.
+*/
+static void ResetBuzzerVariables(void)
+{
+  u8_index_right = 0;
+  u32_right_timer = 0;
+  u16_current_duration_right = 0;
+  u16_note_silent_duration_right = 0;
+  b_note_active_next_right = TRUE;
+
+  u8_index_left = 0;
+  u32_left_timer = 0;
+  u16_current_duration_left = 0;
+  u16_note_silent_duration_left = 0;
+  b_note_active_next_left = TRUE;
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+Function: PreviousSong
+
+Description:
+  Handles the case of playing the song previous to the current song.
+  Changes song index, resets variables, and automatically play the song
+*/
+static void PreviousSong(void)
+{
+  // If currently playing first song of the list, wrap back around to end of list
+  if( current_song_index == 0 )
+  {
+    current_song_index = SONG_LIST_SIZE - 1;
+  }
+  else
+  {
+    current_song_index--;
+  }
+
+  // Reset relevant variables
+  ResetBuzzerVariables();
+
+  // Automatically move to new state
+  MusicPlayer_StateMachine = MusicPlayerSM_Play;
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+Function: NextSong
+
+Description:
+  Handles the case of playing the song next to the current song.
+  Changes song index, resets variables, and automatically play the song.
+*/
+static void NextSong(void)
+{
+  // If currently playing last song of the list, wrap back around to beginning of list
+  if( current_song_index == ( SONG_LIST_SIZE - 1 ) )
+  {
+    current_song_index = 0;
+  }
+  else
+  {
+    current_song_index++;
+  }
+
+  // Reset relevant variables
+  ResetBuzzerVariables();
+
+  // Automatically move to new state
+  MusicPlayer_StateMachine = MusicPlayerSM_Play;
+}
+
 /**********************************************************************************************************************
 State Machine Function Definitions
 **********************************************************************************************************************/
@@ -353,6 +435,20 @@ static void MusicPlayerSM_Play(void)
     ButtonAcknowledge( BUTTON0 );
     MusicPlayer_StateMachine = MusicPlayerSM_Pause;
   }
+
+  // Button 1 goes to "previous" song
+  if( WasButtonPressed( BUTTON1 ) )
+  {
+    ButtonAcknowledge( BUTTON1 );
+    PreviousSong();
+  }
+
+  // Button 2 goes to "next" song
+  if( WasButtonPressed( BUTTON2 ) )
+  {
+    ButtonAcknowledge( BUTTON2 );
+    NextSong();
+  }
 }
 
 /*-------------------------------------------------------------------------------------------------------------------*/
@@ -368,6 +464,20 @@ static void MusicPlayerSM_Pause(void)
   {
     ButtonAcknowledge( BUTTON0 );
     MusicPlayer_StateMachine = MusicPlayerSM_Play;
+  }
+
+  // Button 1 goes to "previous" song
+  if( WasButtonPressed( BUTTON1 ) )
+  {
+    ButtonAcknowledge( BUTTON1 );
+    PreviousSong();
+  }
+
+  // Button 2 goes to "next" song
+  if( WasButtonPressed( BUTTON2 ) )
+  {
+    ButtonAcknowledge( BUTTON2 );
+    NextSong();
   }
 }
 
