@@ -67,11 +67,37 @@ static const SongInfoType song1 = { "Heart and Soul", "Hoagy Carmichael",
                                     song1_note_left, song1_note_duration_left, song1_note_type_left, sizeof( song1_note_left ) / sizeof( song1_note_left[0] )
                                   };
 
+/* Song #2 */
+static const u16 song2_note_right[]          = { 330, 294, 262, NO, 330, 294, 262, NO, 262, 262, 262, 262, 294, 294, 294, 294, 330, 294, 262, NO };
+static const u16 song2_note_duration_right[] = { QN,  QN,  QN,  QN, QN,  QN,  QN,  QN, EN,  EN,  EN,  EN,  EN,  EN,  EN,  EN,  QN,  QN,  QN,  HN };
+static const u16 song2_note_type_right[]     = { RT,  RT,  RT,  RT, RT,  RT,  RT,  RT, RT,  RT,  RT,  RT,  RT,  RT,  RT,  RT,  RT,  RT,  RT,  RT };
+static const u16 song2_note_left[]           = { NO };
+static const u16 song2_note_duration_left[]  = { HN };
+static const u16 song2_note_type_left[]      = { RT };
+
+static const SongInfoType song2 = { "Hot Cross Buns", "?",
+                                    song2_note_right, song2_note_duration_right, song2_note_type_right, sizeof( song2_note_right ) / sizeof( song2_note_right[0] ),
+                                    song2_note_left, song2_note_duration_left, song2_note_type_left, sizeof( song2_note_left ) / sizeof( song2_note_left[0] )
+                                  };
+
+/* Song #3 */
+static const u16 song3_note_right[]          = { E4, E4, E4, E4, C4, C4, G4, G4, G4, G4, G4, G4, G4, G4, D4, D4 };
+static const u16 song3_note_duration_right[] = { QN, QN, QN, QN, HN, HN, EN, EN, EN, EN, EN, EN, EN, EN, HN, HN };
+static const u16 song3_note_type_right[]     = { RT, RT, RT, RT, RT, RT, RT, RT, RT, RT, RT, RT, RT, RT, RT, RT };
+static const u16 song3_note_left[]           = { E4, E4, E4, E4, C4, C4, G4, G4, G4, G4, G4, G4, G4, G4, D4, D4 };
+static const u16 song3_note_duration_left[]  = { QN, QN, QN, QN, HN, HN, EN, EN, EN, EN, EN, EN, EN, EN, HN, HN };
+static const u16 song3_note_type_left[]      = { RT, RT, RT, RT, RT, RT, RT, RT, RT, RT, RT, RT, RT, RT, RT, RT };
+
+static const SongInfoType song3 = { "Song #3", "Placeholder",
+                                    song3_note_right, song3_note_duration_right, song3_note_type_right, sizeof( song3_note_right ) / sizeof( song3_note_right[0] ),
+                                    song3_note_left, song3_note_duration_left, song3_note_type_left, sizeof( song3_note_left ) / sizeof( song3_note_left[0] )
+                                  };
+
 /* List of songs */
-static const SongInfoType* song_list[] = { &song1 };
+static const SongInfoType* song_list[] = { &song1, &song2, &song3 };
 
 /* Index of the current song */
-static u8 current_song_index = 0;
+static u8 current_song_index = 1;
 
 // TODO: IC - need a function that resets these variables when song is changed
 /* Right buzzer variables */
