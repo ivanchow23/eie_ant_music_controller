@@ -46,6 +46,8 @@ Global variable definitions with scope limited to this local application.
 ***********************************************************************************************************************/
 static fnCode_type LcdControl_StateMachine;   /* The state machine function pointer */
 
+static u8 lcd_button_banner[LCD_MAX_LINE_DISPLAY_SIZE] = "||>   <<    >>     ";
+
 static u8 current_song_index;   /* Current song index */
 static LcdStateType lcd_state;
 
@@ -84,6 +86,9 @@ void LcdControlInitialize(void)
 
   // Begin timer for scrolling LCD feature
   lcd_state.title_scroll_timer = G_u32SystemTime1ms;
+
+  // Display the button banner on LCD
+  LCDMessage( LINE2_START_ADDR, lcd_button_banner );
 
   LcdControl_StateMachine = LcdControlSM_DisplayInfo;
 }
