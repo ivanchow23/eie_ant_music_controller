@@ -22,9 +22,9 @@ Constants / Definitions
 ***********************************************************************************************************************/
 #define ANT_CHANNEL_NUMBER              ANT_CHANNEL_0
 #define ANT_CHANNEL_TYPE                CHANNEL_TYPE_SLAVE
-#define ANT_CHANNEL_PERIOD_LO_BYTE      (u8)( 0x00 )  /* Interpret as: 0x<LO_BYTE><HI_BYTE> */
+#define ANT_CHANNEL_PERIOD_LO_BYTE      (u8)( 0x00 )        /* Interpret as: 0x<LO_BYTE><HI_BYTE> */
 #define ANT_CHANNEL_PERIOD_HI_BYTE      (u8)( 0x20 )
-#define ANT_CHANNEL_DEVICE_ID_LO_BYTE   (u8)( 0x70 )  /* Interpret as: 0x<HI_BYTE><LO_BYTE> */
+#define ANT_CHANNEL_DEVICE_ID_LO_BYTE   (u8)( 0x70 )        /* Interpret as: 0x<HI_BYTE><LO_BYTE> */
 #define ANT_CHANNEL_DEVICE_ID_HI_BYTE   (u8)( 0x90 )
 #define ANT_CHANNEL_DEVICE_TYPE         (u8)( 15 )
 #define ANT_CHANNEL_TRANSMISSION_TYPE   (u8)( 77 )
@@ -33,6 +33,8 @@ Constants / Definitions
 
 #define ANT_CHANNEL_INITIAL_DELAY_MS    500
 #define ANT_CHANNEL_OPEN_TIMEOUT_MS     2000
+
+#define ANT_MESSAGE_MAGIC_NUMBER        (u8)( 0xC5 )
 
 /***********************************************************************************************************************
 Existing variables (defined in other files -- should all contain the "extern" keyword)
@@ -44,9 +46,17 @@ extern volatile u32 G_u32SystemTime1s;          /* From board-specific source fi
 extern AntApplicationMessageType G_eAntApiCurrentMessageClass;
 extern u8 G_au8AntApiCurrentMessageBytes[ANT_APPLICATION_MESSAGE_BYTES];
 
-/**********************************************************************************************************************
+/***********************************************************************************************************************
 Type Definitions
-**********************************************************************************************************************/
+***********************************************************************************************************************/
+/* Index for bytes in ANT message */
+typedef enum
+{
+  ANT_MESSAGE_INDEX_MAGIC_NUMBER = 0,
+  ANT_MESSAGE_INDEX_PLAY_PAUSE,
+  ANT_MESSAGE_INDEX_PREV_SONG,
+  ANT_MESSAGE_INDEX_NEXT_SONG
+};
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
@@ -60,6 +70,7 @@ static u32 ant_channel_open_timer = 0;
 /***********************************************************************************************************************
 Local functions
 ***********************************************************************************************************************/
+static void ProcessAntMessage(void);
 static void AntMessageBytesToString(char* output_string, u8 max_size);
 
 /***********************************************************************************************************************
@@ -138,7 +149,26 @@ void AntChannelRunActiveState(void)
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Private functions                                                                                                  */
 /*--------------------------------------------------------------------------------------------------------------------*/
-/*-------------------------------------------------------------------------------------------------------------------*/
+
+/*--------------------------------------------------------------------------------------------------------------------*/
+/* Parses the latest ANT message */
+static void ProcessAntMessage(void)
+{
+  // Return if message does not contain the magic number
+  if( G_au8AntApiCurrentMessageBytes[ANT_MESSAGE_INDEX_MAGIC_NUMBER] != ANT_MESSAGE_MAGIC_NUMBER )
+  {
+    return;
+  }
+
+  char byte_string[50];
+
+  AntMessageBytesToString( byte_string, 50 );
+  DebugPrintf( "Rx'ed: " );
+  DebugPrintf( byte_string );
+  DebugLineFeed();
+}
+
+/*--------------------------------------------------------------------------------------------------------------------*/
 /* Converts the current contents of the ANT message to a formatted string */
 static void AntMessageBytesToString(char* output_string, u8 max_size)
 {
@@ -224,14 +254,10 @@ static void AntChannelSM_ChannelOpen(void)
   {
     if( G_eAntApiCurrentMessageClass == ANT_DATA )
     {
-      char byte_string[50];
+      // Handle the latest message
+      ProcessAntMessage();
 
-      AntMessageBytesToString( byte_string, 50 );
-      DebugPrintf( "Rx'ed: " );
-      DebugPrintf( byte_string );
-      DebugLineFeed();
-
-      // Able to receive master broadcast, show solid LED to indicate a channel is formed
+      // Show solid LED to indicate channel is formed and we received data
       LedOn( ORANGE );
     }
   }
