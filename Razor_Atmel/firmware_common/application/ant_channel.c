@@ -272,6 +272,7 @@ static void AntChannelSM_ChannelClosing(void)
   if( AntRadioStatusChannel( ANT_CHANNEL_NUMBER ) == ANT_CLOSED )
   {
     DebugPrintf( "ANT channel is closed\r\n" );
+    LedOff( ORANGE );
     AntChannel_StateMachine = AntChannelSM_Idle;
   }
 }
