@@ -193,6 +193,9 @@ static void AntChannelSM_WaitChannelOpen(void)
   if( AntRadioStatusChannel( ANT_CHANNEL_NUMBER ) == ANT_OPEN )
   {
     DebugPrintf( "ANT channel open\r\n" );
+
+    // Slow blinking LED indicates channel open, but no master broadcast received
+    LedBlink( ORANGE, LED_1HZ );
     AntChannel_StateMachine = AntChannelSM_ChannelOpen;
   }
 
@@ -227,6 +230,9 @@ static void AntChannelSM_ChannelOpen(void)
       DebugPrintf( "Rx'ed: " );
       DebugPrintf( byte_string );
       DebugLineFeed();
+
+      // Able to receive master broadcast, show solid LED to indicate a channel is formed
+      LedOn( ORANGE );
     }
   }
 }
