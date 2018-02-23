@@ -67,9 +67,15 @@ static AntAssignChannelInfoType channel_info;   /* Structure holding ANT channel
 static u32 ant_channel_initial_delay_timer = 0;
 static u32 ant_channel_open_timer = 0;
 
+/* Sequence numbers for keeping master and slave device messages in sync */
+static u8 ant_msg_play_pause_sequence_number;
+static u8 ant_msg_prev_song_sequence_number;
+static u8 ant_msg_next_song_sequence_number;
+
 /***********************************************************************************************************************
 Local functions
 ***********************************************************************************************************************/
+static void ResetSequenceNumbers(void);
 static void ProcessAntMessage(void);
 static void AntMessageBytesToString(char* output_string, u8 max_size);
 
@@ -115,6 +121,8 @@ void AntChannelInitialize(void)
     channel_info.AntNetworkKey[i] = ANT_DEFAULT_NETWORK_KEY;
   }
 
+  ResetSequenceNumbers();
+
   // Attempt to configure channel
   if( AntAssignChannel( &channel_info ) )
   {
@@ -151,6 +159,15 @@ void AntChannelRunActiveState(void)
 /*--------------------------------------------------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------------------------------------------------*/
+/* Resets ANT message sequence numbers back to 0. */
+static void ResetSequenceNumbers(void)
+{
+  ant_msg_play_pause_sequence_number = 0;
+  ant_msg_prev_song_sequence_number = 0;
+  ant_msg_next_song_sequence_number = 0;
+}
+
+/*--------------------------------------------------------------------------------------------------------------------*/
 /* Parses the latest ANT message */
 static void ProcessAntMessage(void)
 {
@@ -158,6 +175,13 @@ static void ProcessAntMessage(void)
   if( G_au8AntApiCurrentMessageBytes[ANT_MESSAGE_INDEX_MAGIC_NUMBER] != ANT_MESSAGE_MAGIC_NUMBER )
   {
     return;
+  }
+
+  // Check if there is a new message to toggle play or pause
+  if( ant_msg_play_pause_sequence_number != G_au8AntApiCurrentMessageBytes[ANT_MESSAGE_INDEX_PLAY_PAUSE] )
+  {
+    ant_msg_play_pause_sequence_number = G_au8AntApiCurrentMessageBytes[ANT_MESSAGE_INDEX_PLAY_PAUSE];
+    MusicPlayerTogglePlayPause();
   }
 
   char byte_string[50];
