@@ -184,6 +184,20 @@ static void ProcessAntMessage(void)
     MusicPlayerTogglePlayPause();
   }
 
+  // Check if there is a new message to go to the previous song
+  if( ant_msg_prev_song_sequence_number != G_au8AntApiCurrentMessageBytes[ANT_MESSAGE_INDEX_PREV_SONG] )
+  {
+    ant_msg_prev_song_sequence_number = G_au8AntApiCurrentMessageBytes[ANT_MESSAGE_INDEX_PREV_SONG];
+    MusicPlayerPreviousSong();
+  }
+
+  // Check if there is a new message to go to the next song
+  if( ant_msg_next_song_sequence_number != G_au8AntApiCurrentMessageBytes[ANT_MESSAGE_INDEX_NEXT_SONG] )
+  {
+    ant_msg_next_song_sequence_number = G_au8AntApiCurrentMessageBytes[ANT_MESSAGE_INDEX_NEXT_SONG];
+    MusicPlayerNextSong();
+  }
+
   char byte_string[50];
 
   AntMessageBytesToString( byte_string, 50 );

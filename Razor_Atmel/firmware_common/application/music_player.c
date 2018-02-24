@@ -22,8 +22,14 @@ Public functions:
   - const char* MusicPlayerGetCurrentSongArtist(void)
       Returns a pointer to the artist string of the song currently playing
 
-  - boolean MusicPlayerTogglePlayPause(void)
+  - void MusicPlayerTogglePlayPause(void)
       Toggles play or pause. If song is currently playing, pause it, and vice-versa.
+
+  - void MusicPlayerPreviousSong(void)
+      Plays the previous song in the list
+
+  - void MusicPlayerNextSong(void)
+      Plays the next song in the list
 **********************************************************************************************************************/
 
 #include "configuration.h"
@@ -219,6 +225,28 @@ void MusicPlayerTogglePlayPause(void)
   {
     MusicPlayer_StateMachine = MusicPlayerSM_Play;
   }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+Function: MusicPlayerPreviousSong
+
+Description:
+  Plays the previous song in the list
+*/
+void MusicPlayerPreviousSong(void)
+{
+  PreviousSong();
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+Function: MusicPlayerNextSong
+
+Description:
+  Plays the next song in the list
+*/
+void MusicPlayerNextSong(void)
+{
+  NextSong();
 }
 
 /*--------------------------------------------------------------------------------------------------------------------*/

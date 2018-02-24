@@ -27,5 +27,7 @@ u8 MusicPlayerGetCurrentSongIndex(void);
 const char* MusicPlayerGetCurrentSongTitle(void);
 const char* MusicPlayerGetCurrentSongArtist(void);
 void MusicPlayerTogglePlayPause(void);
+void MusicPlayerPreviousSong(void);
+void MusicPlayerNextSong(void);
 
 #endif /* __MUSIC_PLAYER_H */
