@@ -35,10 +35,10 @@ Type Definitions
 /* Holds information about what is displayed on the LCD screen */
 typedef struct
 {
-  u8  title_buffer[TITLE_BUFFER_SIZE]; /* Holds the current song and artist string in a buffer for display */
-  u8  title_size;                      /* Holds the size of the string stored in the title buffer */
-  u8  title_display_start_index;       /* Start index of title string to display on LCD screen */
-  u32 title_scroll_timer;              /* Holds a timer for when to update the scrolling title on LCD screen */
+  char title_buffer[TITLE_BUFFER_SIZE]; /* Holds the current song and artist string in a buffer for display */
+  u8   title_size;                      /* Holds the size of the string stored in the title buffer */
+  u8   title_display_start_index;       /* Start index of title string to display on LCD screen */
+  u32  title_scroll_timer;              /* Holds a timer for when to update the scrolling title on LCD screen */
 } LcdStateType;
 
 /***********************************************************************************************************************
@@ -60,7 +60,6 @@ static void SetNewTitleString(void);
 State Machine Declarations
 ***********************************************************************************************************************/
 static void LcdControlSM_DisplayInfo(void);
-static void LcdControlSM_Error(void);
 
 /**********************************************************************************************************************
 Function Definitions
@@ -171,7 +170,7 @@ static void LcdControlSM_DisplayInfo(void)
     // Fit the whole title on LCD
     if( lcd_state.title_size <= LCD_MAX_LINE_DISPLAY_SIZE )
     {
-      LCDMessage( LINE1_START_ADDR, lcd_state.title_buffer );
+      LCDMessage( LINE1_START_ADDR, (u8*)lcd_state.title_buffer );
     }
     // Otherwise, scroll the title
     else
@@ -199,10 +198,4 @@ static void LcdControlSM_DisplayInfo(void)
       }
     }
   }
-}
-
-/*-------------------------------------------------------------------------------------------------------------------*/
-/* Handles an error */
-static void LcdControlSM_Error(void)
-{
 }

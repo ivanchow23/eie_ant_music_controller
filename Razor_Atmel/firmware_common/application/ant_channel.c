@@ -56,7 +56,7 @@ typedef enum
   ANT_MESSAGE_INDEX_PLAY_PAUSE,
   ANT_MESSAGE_INDEX_PREV_SONG,
   ANT_MESSAGE_INDEX_NEXT_SONG
-};
+} AntMessageIndexType;
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
@@ -202,7 +202,7 @@ static void ProcessAntMessage(void)
 
   AntMessageBytesToString( byte_string, 50 );
   DebugPrintf( "Rx'ed: " );
-  DebugPrintf( byte_string );
+  DebugPrintf( (u8*)byte_string );
   DebugLineFeed();
 }
 

@@ -140,7 +140,6 @@ State Machine Declarations
 ***********************************************************************************************************************/
 static void MusicPlayerSM_Play(void);
 static void MusicPlayerSM_Pause(void);
-static void MusicPlayerSM_Error(void);
 
 /**********************************************************************************************************************
 Function Definitions
@@ -529,10 +528,4 @@ static void MusicPlayerSM_Pause(void)
     ButtonAcknowledge( BUTTON2 );
     NextSong();
   }
-}
-
-/*-------------------------------------------------------------------------------------------------------------------*/
-/* Handle an error */
-static void MusicPlayerSM_Error(void)
-{
 }
