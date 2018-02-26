@@ -17,7 +17,7 @@ class AntMusicControllerApp extends App.AppBase {
 
     // Return the initial view of your application here
     function getInitialView() {
-        return [ new AntMusicControllerView(), new AntMusicControllerDelegate() ];
+        return [ new AntMusicControllerView() ];
     }
 
 }
