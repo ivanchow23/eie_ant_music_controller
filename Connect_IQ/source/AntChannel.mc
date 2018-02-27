@@ -12,6 +12,8 @@ class AntChannel extends Ant.GenericChannel {
     const CHANNEL_TYPE = Ant.CHANNEL_TYPE_TX_NOT_RX; // Master channel
     const NETWORK_TYPE = Ant.NETWORK_PUBLIC;
     
+    const MAGIC_NUMBER = 197; // 0xC5
+    
     // Called when a new instance of this object is created
     // Configures and opens the ANT channel as a master device
     function initialize() {
@@ -36,9 +38,25 @@ class AntChannel extends Ant.GenericChannel {
         GenericChannel.setDeviceConfig(deviceConfig);
         
         // Open ANT channel
-        GenericChannel.open();
+        if( GenericChannel.open() ) {
+            System.println("Channel open.");   
+        }
+        else {
+            System.println("Channel failed to open.");
+            Test.assert(true);
+        }
         
-        System.println("Channel open.");
+        // Set initial broadcast message to be all 0's, except first byte (magic number)
+        var data    = new[Ant.Message.DATA_PAYLOAD_LENGTH];
+        var message = new Ant.Message();
+        
+        data[0] = MAGIC_NUMBER;
+        for(var i = 1; i < Ant.Message.DATA_PAYLOAD_LENGTH; i++) {
+            data[i] = 0;
+        }
+        
+        message.setPayload(data);
+        GenericChannel.sendBroadcast(message);
     }
     
     // Handles when a message is going to be broadcast
@@ -49,7 +67,7 @@ class AntChannel extends Ant.GenericChannel {
 
         System.print(msg.messageId + " ");
 
-        for ( var i = 0; i < 8; i++ )
+        for ( var i = 0; i < msg.length; i++ )
         {
             System.print(payload[i] + " ");
         }
