@@ -1,0 +1,5 @@
+<menu id="MusicControlMenu" title="Music Control">
+    <menu-item id="TOGGLE_PLAY_PAUSE">Play/Pause</menu-item>
+    <menu-item id="PREV_SONG">Previous Song</menu-item>
+    <menu-item id="NEXT_SONG">Next Song</menu-item>
+</menu>
