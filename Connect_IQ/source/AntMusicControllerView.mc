@@ -20,6 +20,7 @@ class AntMusicControllerView extends Ui.View {
 
     // Update the view - Show title screen
     function onUpdate(dc) {
+    
         // Call the parent onUpdate function to redraw the layout
         View.onUpdate(dc);
         
@@ -31,7 +32,8 @@ class AntMusicControllerView extends Ui.View {
         dc.setColor(Gfx.COLOR_YELLOW, Gfx.COLOR_TRANSPARENT);
         dc.drawText(dc.getWidth() / 2, dc.getHeight() * 7 / 10, Gfx.FONT_XTINY, "By: Ivan Chow", Gfx.TEXT_JUSTIFY_CENTER);
         
-        // TODO: IC - Show app version here 
+        var versionString = "App Version: " + Version.VERSION_MAJOR + "." + Version.VERSION_MINOR + "." + Version.VERSION_MICRO;
+        dc.drawText(dc.getWidth() / 2, dc.getHeight() * 4 / 5, Gfx.FONT_XTINY, versionString, Gfx.TEXT_JUSTIFY_CENTER);
     }
 
     // Called when this View is removed from the screen. Save the
