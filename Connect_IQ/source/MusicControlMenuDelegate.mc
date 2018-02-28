@@ -14,15 +14,15 @@ class MusicControlMenuDelegate extends Ui.MenuInputDelegate {
     function onMenuItem(item) {
     
         if(item == :TOGGLE_PLAY_PAUSE) {
-            System.println("Toggle play/pause selected.");
+            antChannel.sendMessage(ANT_MSG_TOGGLE_PLAY_PAUSE);
         }
         
         else if(item == :PREV_SONG) { 
-            System.println("Previous song selected.");
+            antChannel.sendMessage(ANT_MSG_PREVIOUS_SONG);
         }
         
         else if(item == :NEXT_SONG) {
-            System.println("Next song selected.");
+            antChannel.sendMessage(ANT_MSG_NEXT_SONG);
         }
     }
 }
