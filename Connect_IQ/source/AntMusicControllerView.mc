@@ -32,7 +32,7 @@ class AntMusicControllerView extends Ui.View {
         dc.setColor(Gfx.COLOR_YELLOW, Gfx.COLOR_TRANSPARENT);
         dc.drawText(dc.getWidth() / 2, dc.getHeight() * 7 / 10, Gfx.FONT_XTINY, "By: Ivan Chow", Gfx.TEXT_JUSTIFY_CENTER);
         
-        var versionString = "App Version: " + Version.VERSION_MAJOR + "." + Version.VERSION_MINOR + "." + Version.VERSION_MICRO;
+        var versionString = "Ver: " + Version.VERSION_MAJOR + "." + Version.VERSION_MINOR + "." + Version.VERSION_MICRO;
         dc.drawText(dc.getWidth() / 2, dc.getHeight() * 4 / 5, Gfx.FONT_XTINY, versionString, Gfx.TEXT_JUSTIFY_CENTER);
     }
 
