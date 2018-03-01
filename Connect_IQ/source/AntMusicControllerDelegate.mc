@@ -14,8 +14,14 @@ class AntMusicControllerDelegate extends Ui.BehaviorDelegate {
         return true;
     }
     
+    // Next page button pressed: opens a menu for music options
     function onNextPage() {
         Ui.pushView(new Rez.Menus.MusicControlMenu(), new MusicControlMenuDelegate(antChannel), Ui.SLIDE_UP);
         return true;
+    }
+    
+    // Back button pressed: close the ANT channel before exiting
+    function onBack() {
+        antChannel.close();
     }
 }
