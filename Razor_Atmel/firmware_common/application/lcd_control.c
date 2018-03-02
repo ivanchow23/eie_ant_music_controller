@@ -20,8 +20,9 @@ Public functions:
 /***********************************************************************************************************************
 Constants / Definitions
 ***********************************************************************************************************************/
-#define TITLE_BUFFER_SIZE           100
-#define LCD_SCROLL_UPDATE_TIME_MS   200
+#define TITLE_BUFFER_SIZE               100
+#define LCD_SCROLL_UPDATE_TIME_MS       200
+#define LCD_NEW_TITLE_FREEZE_DELAY_MS   1000
 
 /***********************************************************************************************************************
 Existing variables (defined in other files -- should all contain the "extern" keyword)
@@ -39,6 +40,7 @@ typedef struct
   u8   title_size;                      /* Holds the size of the string stored in the title buffer */
   u8   title_display_start_index;       /* Start index of title string to display on LCD screen */
   u32  title_scroll_timer;              /* Holds a timer for when to update the scrolling title on LCD screen */
+  u32  title_freeze_delay;              /* Holds a timer to briefly "freeze" the title when a song is changed */
 } LcdStateType;
 
 /***********************************************************************************************************************
@@ -160,6 +162,9 @@ static void LcdControlSM_DisplayInfo(void)
 
     // Set a new title string to show on LCD screen
     SetNewTitleString();
+
+    // Add a slight delay here
+    lcd_state.title_freeze_delay = G_u32SystemTime1ms;
   }
 
   // Display the title on LCD
@@ -190,6 +195,12 @@ static void LcdControlSM_DisplayInfo(void)
       }
 
       LCDMessage( LINE1_START_ADDR, temp_buffer );
+
+      // "Freeze" the title on LCD briefly so it doesn't scroll off too fast on a song change
+      if( !IsTimeUp( &lcd_state.title_freeze_delay, LCD_NEW_TITLE_FREEZE_DELAY_MS ) )
+      {
+        return;
+      }
 
       // Update starting index of title for next time we scroll
       if( ++lcd_state.title_display_start_index >= lcd_state.title_size )
