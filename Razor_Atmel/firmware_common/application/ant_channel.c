@@ -72,6 +72,10 @@ static u8 ant_msg_play_pause_sequence_number;
 static u8 ant_msg_prev_song_sequence_number;
 static u8 ant_msg_next_song_sequence_number;
 
+/* Acknowledge message payload */
+/* It will be a sequence of alternating magic numbers */
+static u8 ant_msg_ack[ANT_APPLICATION_MESSAGE_BYTES] = { 0, ANT_MESSAGE_MAGIC_NUMBER, 0, ANT_MESSAGE_MAGIC_NUMBER, 0, ANT_MESSAGE_MAGIC_NUMBER, 0, ANT_MESSAGE_MAGIC_NUMBER };
+
 /***********************************************************************************************************************
 Local functions
 ***********************************************************************************************************************/
@@ -294,6 +298,9 @@ static void AntChannelSM_ChannelOpen(void)
     {
       // Handle the latest message
       ProcessAntMessage();
+
+      // Send acknowledge
+      AntQueueAcknowledgedMessage( ANT_CHANNEL_NUMBER, ant_msg_ack );
 
       // Show solid LED to indicate channel is formed and we received data
       LedOn( ORANGE );
