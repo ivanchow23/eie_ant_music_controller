@@ -8,20 +8,10 @@ class AntMusicControllerDelegate extends Ui.BehaviorDelegate {
         BehaviorDelegate.initialize();
     }
     
-    // Select button pressed: opens an ANT channel
+    // Select button pressed: Switch to a new page and open ANT channel
     function onSelect() {
         antChannel = new AntChannel();
+        Ui.pushView(new AntConnectingView(antChannel), new AntConnectingDelegate(antChannel), Ui.SLIDE_IMMEDIATE);
         return true;
-    }
-    
-    // Next page button pressed: opens a menu for music options
-    function onNextPage() {
-        Ui.pushView(new Rez.Menus.MusicControlMenu(), new MusicControlMenuDelegate(antChannel), Ui.SLIDE_UP);
-        return true;
-    }
-    
-    // Back button pressed: close the ANT channel before exiting
-    function onBack() {
-        antChannel.close();
     }
 }
