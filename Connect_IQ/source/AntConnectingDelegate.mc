@@ -10,10 +10,10 @@ class AntConnectingDelegate extends Ui.BehaviorDelegate {
         antChannel = refChannel;
     }
     
-    // Back button pressed: Close the ANT channel and go back to main menu
+    // Back button pressed: Close and release the ANT channel and go back to main menu
     function onBack() {
     
-        antChannel.close();
+        antChannel.release();
         Ui.popView(Ui.SLIDE_IMMEDIATE);
         return true;
     }

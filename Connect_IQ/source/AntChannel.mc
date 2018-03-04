@@ -97,9 +97,10 @@ class AntChannel extends Ant.GenericChannel {
         updateAntMsgPayload();
     }
     
-    // Closes the ANT channel
-    function close() {
-        GenericChannel.close();
+    // Closes and releases the ANT channel
+    function release() {
+        GenericChannel.release();
+        System.println("Channel released.");
     }
     
     // Handles when a message is going to be broadcast
