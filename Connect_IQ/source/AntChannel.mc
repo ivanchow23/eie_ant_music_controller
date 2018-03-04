@@ -1,5 +1,6 @@
 using Toybox.Ant as Ant;
 using Toybox.System as System;
+using Toybox.WatchUi as Ui;
 
 // ENUM of ANT messages to send
 enum {
@@ -28,8 +29,14 @@ class AntChannel extends Ant.GenericChannel {
     const NETWORK_TYPE = Ant.NETWORK_PUBLIC;         // Default network type
     const MAGIC_NUMBER = 197;                        // 0xC5
     
+    // Expected acknowledge payload 
+    const ackPayload = [0, MAGIC_NUMBER, 0, MAGIC_NUMBER, 0, MAGIC_NUMBER, 0, MAGIC_NUMBER];
+    
     // Latest ANT message payload data
-    static var data;
+    static hidden var data;
+    
+    // Connection status
+    static hidden var connectedFlag;
     
     // Called when a new instance of this object is created
     // Configures and opens the ANT channel as a master device
@@ -53,6 +60,8 @@ class AntChannel extends Ant.GenericChannel {
         // Initialize channel and set configurations
         GenericChannel.initialize(method(:onMessage), channelAssignment);
         GenericChannel.setDeviceConfig(deviceConfig);
+        
+        connectedFlag = false;
         
         // Open ANT channel
         if( GenericChannel.open() ) {
@@ -97,15 +106,49 @@ class AntChannel extends Ant.GenericChannel {
         updateAntMsgPayload();
     }
     
+    // Returns true if the ANT channel is connected
+    // i.e.: Slave device is able to receive the data, and the app. received its acknowledge
+    function isConnected() {
+        return connectedFlag;
+    }
+    
     // Closes and releases the ANT channel
     function release() {
         GenericChannel.release();
         System.println("Channel released.");
     }
     
-    // Handles when a message is going to be broadcast
+    // Handles when an incoming message from the channel
     static function onMessage(msg) {
-        // Do nothing
+    
+        // Check if we got an acknowledge message from slave device
+        // This will determine if the 2 devices are "connected"
+        if(msg.messageId == 0x4F) {
+            
+            // Only check if we are currently not connected to save processing time
+            if(!connectedFlag) {
+            
+                var payload = msg.getPayload();
+                connectedFlag = checkAckPayload(payload);
+                
+                // U.I. changes depend on the connection status
+                Ui.requestUpdate();
+            }
+        }
+    }
+
+    // Checks the received acknowledge message payload to determine if slave device is connected    
+    static function checkAckPayload(payload) {
+    
+        // Make sure payload matches what we expect
+        for( var i = 0; i < Ant.Message.DATA_PAYLOAD_LENGTH; i++ ) {
+        
+            if( payload[i] != ackPayload[i] ) {
+                return false;
+            }
+        }
+        
+        return true; 
     }
     
     // Sends the latest ANT message payload to the channel
