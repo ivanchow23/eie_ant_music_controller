@@ -72,7 +72,8 @@ void main(void)
   /* Application initialization */
   AntChannelInitialize();
   LcdControlInitialize();
-  MusicPlayerInitialize();
+  MidiPlayerInitialize();
+  // MusicPlayerInitialize();
 
   /* Exit initialization */
   SystemStatusReport();
@@ -101,7 +102,8 @@ void main(void)
     /* Applications */
     AntChannelRunActiveState();
     LcdControlRunActiveState();
-    MusicPlayerRunActiveState();
+    MidiPlayerRunActiveState();
+    // MusicPlayerRunActiveState();
 
     /* System sleep*/
     HEARTBEAT_OFF();
