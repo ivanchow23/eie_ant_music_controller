@@ -1,3 +1,8 @@
+// AntConnectingDelegate.mc
+// Description: Handles input from the ANT connection view.
+// By: Ivan Chow
+// Date: February 26, 2018
+
 using Toybox.WatchUi as Ui;
 
 class AntConnectingDelegate extends Ui.BehaviorDelegate {

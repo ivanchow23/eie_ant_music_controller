@@ -1,3 +1,8 @@
+// AntMusicControllerApp.mc
+// Description: This is where the application starts.
+// By: Ivan Chow
+// Date: February 25, 2018
+
 using Toybox.Application as App;
 using Toybox.WatchUi as Ui;
 

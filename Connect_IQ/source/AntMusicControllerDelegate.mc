@@ -1,3 +1,8 @@
+// AntMusicControllerDelegate.mc
+// Description: Handles inputs from the AntMusicControllerView class.
+// By: Ivan Chow
+// Date: February 25, 2018
+
 using Toybox.WatchUi as Ui;
 
 class AntMusicControllerDelegate extends Ui.BehaviorDelegate {

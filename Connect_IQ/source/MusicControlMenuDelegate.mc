@@ -1,3 +1,8 @@
+// MusicControlMenuDelegate.mc
+// Description: Handles input for the music control menu.
+// By: Ivan Chow
+// Date: February 26, 2018
+
 using Toybox.WatchUi as Ui;
 
 class MusicControlMenuDelegate extends Ui.MenuInputDelegate {

@@ -1,3 +1,9 @@
+// AntMusicControllerView.mc
+// Description: The view for the start of the application.
+// By: Ivan Chow
+// Date: February 25, 2018
+
+
 using Toybox.WatchUi as Ui;
 using Toybox.Graphics as Gfx;
 

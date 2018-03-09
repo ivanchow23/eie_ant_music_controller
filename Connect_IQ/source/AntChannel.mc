@@ -1,3 +1,8 @@
+// AntChannel.mc
+// Description: Class for establishing an ANT channel with the EiE music board.
+// By: Ivan Chow
+// Date: February 25, 2018
+
 using Toybox.Ant as Ant;
 using Toybox.System as System;
 using Toybox.WatchUi as Ui;

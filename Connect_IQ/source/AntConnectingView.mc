@@ -1,3 +1,8 @@
+// AntConnectingView.mc
+// Description: A placeholder view to show ANT connection status.
+// By: Ivan Chow
+// Date: March 3, 2018
+
 using Toybox.WatchUi as Ui;
 using Toybox.Graphics as Gfx;
 
