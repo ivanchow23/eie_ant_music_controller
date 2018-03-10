@@ -125,7 +125,7 @@ def generate_code(song_num, song_title, song_artist, notes_right, notes_left):
 
     # Generate information structure for this song
     song_prefix_str = "song" + str(song_num)
-    out.write("\nstatic const SongInfoType {} = {{ {}, {}, ".format(song_prefix_str, song_title, song_artist))
+    out.write("\nstatic const SongInfoType {} = {{ \"{}\", \"{}\", ".format(song_prefix_str, song_title, song_artist))
     out.write("{}_note_right, {}_note_duration_right, sizeof( {}_note_right ) / sizeof( {}_note_right[0] ), ". format(song_prefix_str, song_prefix_str, song_prefix_str, song_prefix_str))
     out.write("{}_note_left, {}_note_duration_left, sizeof( {}_note_left ) / sizeof( {}_note_left[0] ) }};\n".format(song_prefix_str, song_prefix_str, song_prefix_str, song_prefix_str))
 
@@ -152,9 +152,10 @@ else:
 notes_list_right = parse_notes_and_duration(args.b1)
 notes_list_left = parse_notes_and_duration(args.b2)
 
-# TODO: IC - Allow user to specify song title and artist
-song_title = ""
-song_artist = ""
+# Prompt user to enter song information for generating code variables
+song_title = raw_input("Enter the song title: ")
+song_artist = raw_input("Enter the song artist: ")
+song_number = int(input("Enter the song number (for generating code variables): "))
 
-# TODO: IC - Allow user input to specify which song number this is.
-generate_code(1, song_title, song_artist, notes_list_right, notes_list_left)
+generate_code(song_number, song_title, song_artist, notes_list_right, notes_list_left)
+print("\nDone.")
