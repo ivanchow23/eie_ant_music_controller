@@ -8,6 +8,7 @@ API:
 **********************************************************************************************************************/
 
 #include "configuration.h"
+#include "songs.h"          // TODO: IC - Move this to MusicPlayer.c when ready to port. Do not put in configuration.h
 
 /**********************************************************************************************************************
 Constants / Definitions
@@ -19,49 +20,12 @@ Existing variables (defined in other files -- should all contain the "extern" ke
 extern volatile u32 G_u32SystemTime1ms;         /* From board-specific source file */
 extern volatile u32 G_u32SystemTime1s;          /* From board-specific source file */
 
-/**********************************************************************************************************************
-Type Definitions
-**********************************************************************************************************************/
-typedef struct
-{
-  const char* title;
-  const char* artist;
-  const u16*  note_right;           /* Array of note frequencies for right buzzer */
-  const u16*  note_duration_right;  /* Array of note durations for right buzzer*/
-  const u16   num_notes_right;      /* Number of notes for right buzzer */
-  const u16*  note_left;            /* Array of note frequencies for left buzzer */
-  const u16*  note_duration_left;   /* Array of note durations for left buzzer*/
-  const u16   num_notes_left;       /* Number of notes for left buzzer */
-} SongInfoType;
-
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
 ***********************************************************************************************************************/
 static fnCode_type MidiPlayer_StateMachine;    /* The state machine function pointer */
 
-/***********************************************************************************************************************
-Local functions
-***********************************************************************************************************************/
-static void ResetBuzzerVariables(void);
-
-/***********************************************************************************************************************
-State Machine Declarations
-***********************************************************************************************************************/
-static void MidiPlayerSM_Play(void);
-
-static const u16 song1_note_right[] =          { 330, 294, 262, NO, 330, 294, 262, NO, 262, NO, 262, NO, 262, NO, 262, NO, 294, NO, 294, NO, 294, NO, 294, NO, 330, 294, 262, NO };
-static const u16 song1_note_duration_right[] = { QN,  QN,  QN,  QN, QN,  QN,  QN,  QN, SN,  SN, SN,  SN, SN,  SN, SN,  SN, SN,  SN, SN,  SN, SN,  SN, SN,  SN, QN,  QN,  QN,  HN };
-static const u16 song1_note_left[] =           { 330, 294, 262, NO, 330, 294, 262, NO, 262, NO, 262, NO, 262, NO, 262, NO, 294, NO, 294, NO, 294, NO, 294, NO, 330, 294, 262, NO };
-static const u16 song1_note_duration_left[] =  { QN,  QN,  QN,  QN, QN,  QN,  QN,  QN, SN,  SN, SN,  SN, SN,  SN, SN,  SN, SN,  SN, SN,  SN, SN,  SN, SN,  SN, QN,  QN,  QN,  HN };
-
-static const SongInfoType song1 = { "Hot Cross Buns", "?",
-                                    song1_note_right, song1_note_duration_right, sizeof( song1_note_right ) / sizeof( song1_note_right[0] ),
-                                    song1_note_left, song1_note_duration_left, sizeof( song1_note_left ) / sizeof( song1_note_left[0] )
-                                  };
-
-/* List of songs */
-static const SongInfoType* song_list[] = { &song1 };
-
+/* Index for song_list */
 static u8 song_index = 0;
 
 /* Right buzzer variables */
@@ -73,6 +37,16 @@ static u32 note_right_index = 0;
 static u32 buzzer_left_timer = 0;
 static u16 current_note_duration_left = 0;
 static u32 note_left_index = 0;
+
+/***********************************************************************************************************************
+Local functions
+***********************************************************************************************************************/
+static void ResetBuzzerVariables(void);
+
+/***********************************************************************************************************************
+State Machine Declarations
+***********************************************************************************************************************/
+static void MidiPlayerSM_Play(void);
 
 /**********************************************************************************************************************
 Function Definitions
