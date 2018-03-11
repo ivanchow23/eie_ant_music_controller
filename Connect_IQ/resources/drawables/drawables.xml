@@ -1,3 +1,9 @@
 <drawables>
     <bitmap id="LauncherIcon" filename="launcher_icon.png" />
+    
+    <!-- Image reference: https://apps.goodereader.com/android-apps/video-streaming-apps-for-android/?did=2231 -->
+    <bitmap id="AntLogo" filename="ant_logo.png" />
+    
+    <!-- Image reference: http://m.sweetclipart.com/musical-notes-set-color-clip-art/ -->
+    <bitmap id="MusicalNotes" filename="musical_notes_clipart_resized.png" />
 </drawables>
