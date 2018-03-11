@@ -13,11 +13,11 @@ import mido
 from mido import MidiFile, MidiTrack
 
 # Parses the given MIDI file and returns a list of notes (in frequency) and note durations (in milliseconds)
-# If MIDI file is not specified, returns a list containing 0 frequency and some abitrary duration
+# If MIDI file is not specified, returns an empty list
 def parse_notes_and_duration(input_mid_file):
     # No input file
     if input_mid_file is None:
-        return [(0, 1000)]
+        return []
 
     # Open MIDI file and get some of its information
     in_mid = MidiFile(input_mid_file)
@@ -134,7 +134,8 @@ def write_notes_to_formatted_array(out, list):
     # Pad beginning with 0 to align delta ticks
     out.write("{ 0")
     
-    notes_counter = 0
+    # Start at 1 to account for note pad at the beginning
+    notes_counter = 1
     
     for item in list:
         note = item[0]
@@ -156,8 +157,9 @@ def write_notes_to_formatted_array(out, list):
 # Returns number of notes detected from list and written
 def write_notes_duration_to_formatted_array(out, list):
     out.write("{ ")
-    # Counts how many notes have been printed on the current line
-    notes_counter = 0
+
+    # Start at 1 to account for note duration pad at the end
+    notes_counter = 1
     
     for item in list:
         note_dur = item[1]
@@ -192,7 +194,7 @@ else:
     print("Buzzer 2 (left buzzer) will not play anything.\n")
 
 # Parse the MIDI files for notes and corresponding durations into a list
-# If an input is not specified, it will return a list containing: 0 frequency and some arbitrary time (so buzzer will not play when loaded in firmware)
+# If an input is not specified, it will return an empty list
 notes_list_right = parse_notes_and_duration(args.b1)
 notes_list_left = parse_notes_and_duration(args.b2)
 
