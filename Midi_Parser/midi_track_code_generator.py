@@ -16,7 +16,7 @@ LOW_NOTE_FREQ_THRESHOLD = 100
 
 # Parses the given MIDI file and returns a list of notes (in frequency) and note durations (in milliseconds)
 # If MIDI file is not specified, returns an empty list
-def parse_notes_and_duration(input_mid_file):
+def parse_notes_and_duration(input_mid_file, octave_shift):
     # No input file
     if input_mid_file is None:
         return []
@@ -46,7 +46,7 @@ def parse_notes_and_duration(input_mid_file):
                 else:
                     # Convert note message number into frequency
                     note_val = int(msg_dict['note'])
-                    note_freq = midi_note_to_freq(note_val)
+                    note_freq = midi_note_to_freq(note_val, octave_shift)
 
                     notes_list.append( (note_freq, delta_time_ms) )
 
@@ -83,8 +83,8 @@ def midi_ticks_to_ms(ticks, ticks_per_beat, tempo):
 # Converts a MIDI note value into frequency
 # Rounded to the nearest integer
 # Reference: https://newt.phys.unsw.edu.au/jw/notes.html
-def midi_note_to_freq(m):
-    freq = ( 2**( (m - 69) / 12.0 ) ) * 440
+def midi_note_to_freq(m, octave_shift):
+    freq = ( 2**( ( m + (octave_shift * 12) - 69 ) / 12.0 ) ) * 440
     return int(round(freq))
 
 # Generates code with the given input information
@@ -92,7 +92,7 @@ def midi_note_to_freq(m):
 def generate_code(song_num, song_title, song_artist, notes_right, notes_left):
     file_name = "song" + str(song_num) + ".h"
     out = open(file_name, 'w')
-    
+
     # Auto-generate the header
     out.write("// File: {}\n".format(file_name))
     out.write("// Auto-generated song information using: midi_track_code_generator.py\n")
@@ -102,21 +102,21 @@ def generate_code(song_num, song_title, song_artist, notes_right, notes_left):
     out.write("//   2. Add the \"song#\" variable into the song_list[] variable\n\n")
 
     out.write("/* Song #{} */\n".format(song_num))
-    
+
     # Generate notes array for right buzzer
     out.write("static const u16 song{}_note_right[] = ".format(song_num))
     num_notes = write_notes_to_formatted_array(out, notes_right)
     print("\nRight buzzer: {} notes.".format(num_notes))
-    
+
     out.write("static const u16 song{}_note_duration_right[] = ".format(song_num))
     num_notes = write_notes_duration_to_formatted_array(out, notes_right)
     print("Right buzzer: {} note durations.".format(num_notes))
-    
+
     # Generate notes array for left buzzer
     out.write("static const u16 song{}_note_left[] = ".format(song_num))
     num_notes = write_notes_to_formatted_array(out, notes_left)
     print("Left buzzer: {} notes.".format(num_notes))
-    
+
     out.write("static const u16 song{}_note_duration_left[] = ".format(song_num))
     num_notes = write_notes_duration_to_formatted_array(out, notes_left)
     print("Left buzzer: {} note durations.".format(num_notes))
@@ -135,23 +135,23 @@ def generate_code(song_num, song_title, song_artist, notes_right, notes_left):
 def write_notes_to_formatted_array(out, list):
     # Pad beginning with 0 to align delta ticks
     out.write("{ 0")
-    
+
     # Start at 1 to account for note pad at the beginning
     notes_counter = 1
-    
+
     for item in list:
         note = item[0]
         notes_counter += 1
-        
+
         # Limit how many notes can be on a line
         if((notes_counter % 1000) == 0):
             out.write(",\n")
             out.write("{}".format(note))
         else:
             out.write(", {}".format(note))
-            
+
     out.write(" };\n")
-    
+
     return notes_counter
 
 # Converts list into formatted C-array for note durations
@@ -162,70 +162,72 @@ def write_notes_duration_to_formatted_array(out, list):
 
     # Start at 1 to account for note duration pad at the end
     notes_counter = 1
-    
+
     for item in list:
         note_dur = item[1]
         notes_counter += 1
-        
+
         # Limit how many notes can be on a line
         if((notes_counter % 1000) == 0):
             out.write("\n")
             out.write("{}, ".format(note_dur))
         else:
             out.write("{}, ".format(note_dur))
-            
+
     # Pad ending with a short duration to align delta ticks
     out.write("1000 };\n")
-    
+
     return notes_counter
-    
+
 # Checks and prints the lowest and highest note frequency in the list
 # Prints a warning if frequency falls below the threshold
 def check_note_frequencies(notes_list, buzzer_id):
     # Empty list - ignore.
     if not notes_list:
         return
-        
+
     min = 65535
     max = 0
-    
+
     for item in notes_list:
         # Ignore intended silent notes
         if(item[0] == 0):
             continue
-            
+
         if(item[0] < min):
             min = item[0]
-         
+
         if(item[0] > max):
             max = item[0]
-            
+
     print("Buzzer {}: Min. Frequency (Not incl. silent notes) = {} Hz. | Max. Frequency = {} Hz.".format(buzzer_id, min, max))
-    
-    if(min < LOW_NOTE_FREQ_THRESHOLD):    
+
+    if(min < LOW_NOTE_FREQ_THRESHOLD):
         print("Warning! Buzzer {} lowest non-zero frequency is below the {} Hz threshold. Note may not play properly.".format(buzzer_id, LOW_NOTE_FREQ_THRESHOLD))
-        
-    
+
+
 # Parse arguments
 parser = argparse.ArgumentParser()
 parser.add_argument("-b1", help="Input MIDI track file to be played on buzzer 1 (right buzzer) of the EiE board")
 parser.add_argument("-b2", help="Input MIDI track file to be played on buzzer 2 (left buzzer) of the EiE board")
+parser.add_argument("-o1", type=int, default=0, help="Shift MIDI track octave for buzzer 1 (right buzzer). Inputs can be 0, 1, 2, -1, etc.")
+parser.add_argument("-o2", type=int, default=0, help="Shift MIDI track octave for buzzer 2 (left buzzer). Inputs can be 0, 1, 2, -1, etc.")
 args = parser.parse_args()
 
 if args.b1 is not None:
-    print("\nParsing: {} for buzzer 1 (right buzzer)".format(args.b1))
+    print("\nParsing: {} for buzzer 1 (right buzzer) with octave offset {}".format(args.b1, args.o1))
 else:
     print("\nParsing: Nothing for buzzer 1. It will not play anything.")
 
 if args.b2 is not None:
-    print("Parsing: {} for buzzer 2 (left buzzer)\n".format(args.b2))
+    print("Parsing: {} for buzzer 2 (left buzzer) with octave offset {}\n".format(args.b2, args.o2))
 else:
     print("\nParsing: Nothing for buzzer 2. It will not play anything.")
 
 # Parse the MIDI files for notes and corresponding durations into a list
 # If an input is not specified, it will return an empty list
-notes_list_right = parse_notes_and_duration(args.b1)
-notes_list_left = parse_notes_and_duration(args.b2)
+notes_list_right = parse_notes_and_duration(args.b1, args.o1)
+notes_list_left = parse_notes_and_duration(args.b2, args.o2)
 
 # Check to make sure notes are not below a certain frequency - found that the EiE board struggles with playing frequencies below 100 Hz.
 check_note_frequencies(notes_list_right, 1)
