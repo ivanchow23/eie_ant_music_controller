@@ -12,6 +12,8 @@ import os
 import mido
 from mido import MidiFile, MidiTrack
 
+LOW_NOTE_FREQ_THRESHOLD = 100
+
 # Parses the given MIDI file and returns a list of notes (in frequency) and note durations (in milliseconds)
 # If MIDI file is not specified, returns an empty list
 def parse_notes_and_duration(input_mid_file):
@@ -177,6 +179,33 @@ def write_notes_duration_to_formatted_array(out, list):
     
     return notes_counter
     
+# Checks and prints the lowest and highest note frequency in the list
+# Prints a warning if frequency falls below the threshold
+def check_note_frequencies(notes_list, buzzer_id):
+    # Empty list - ignore.
+    if not notes_list:
+        return
+        
+    min = 65535
+    max = 0
+    
+    for item in notes_list:
+        # Ignore intended silent notes
+        if(item[0] == 0):
+            continue
+            
+        if(item[0] < min):
+            min = item[0]
+         
+        if(item[0] > max):
+            max = item[0]
+            
+    print("Buzzer {}: Min. Frequency (Not incl. silent notes) = {} Hz. | Max. Frequency = {} Hz.".format(buzzer_id, min, max))
+    
+    if(min < LOW_NOTE_FREQ_THRESHOLD):    
+        print("Warning! Buzzer {} lowest non-zero frequency is below the {} Hz threshold. Note may not play properly.".format(buzzer_id, LOW_NOTE_FREQ_THRESHOLD))
+        
+    
 # Parse arguments
 parser = argparse.ArgumentParser()
 parser.add_argument("-b1", help="Input MIDI track file to be played on buzzer 1 (right buzzer) of the EiE board")
@@ -186,20 +215,24 @@ args = parser.parse_args()
 if args.b1 is not None:
     print("\nParsing: {} for buzzer 1 (right buzzer)".format(args.b1))
 else:
-    print("\nBuzzer 1 (right buzzer) will not play anything.")
+    print("\nParsing: Nothing for buzzer 1. It will not play anything.")
 
 if args.b2 is not None:
     print("Parsing: {} for buzzer 2 (left buzzer)\n".format(args.b2))
 else:
-    print("Buzzer 2 (left buzzer) will not play anything.\n")
+    print("\nParsing: Nothing for buzzer 2. It will not play anything.")
 
 # Parse the MIDI files for notes and corresponding durations into a list
 # If an input is not specified, it will return an empty list
 notes_list_right = parse_notes_and_duration(args.b1)
 notes_list_left = parse_notes_and_duration(args.b2)
 
+# Check to make sure notes are not below a certain frequency - found that the EiE board struggles with playing frequencies below 100 Hz.
+check_note_frequencies(notes_list_right, 1)
+check_note_frequencies(notes_list_left, 2)
+
 # Prompt user to enter song information for generating code variables
-song_title = raw_input("Enter the song title: ")
+song_title = raw_input("\nEnter the song title: ")
 song_artist = raw_input("Enter the song artist: ")
 song_number = int(input("Enter the song number (for generating code variables): "))
 
