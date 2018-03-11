@@ -88,40 +88,36 @@ def midi_note_to_freq(m):
 # Generates code with the given input information
 # Takes in the song number, song title and artist strings, and list of notes and corresponding durations for each buzzer
 def generate_code(song_num, song_title, song_artist, notes_right, notes_left):
-    file_name = "song" + str(song_num) + ".c"
-    out = open(file_name, 'a')
+    file_name = "song" + str(song_num) + ".h"
+    out = open(file_name, 'w')
+    
+    # Auto-generate the header
+    out.write("// File: {}\n".format(file_name))
+    out.write("// Auto-generated song information using: midi_track_code_generator.py\n")
+    out.write("// !! DO NOT EDIT !!\n\n")
+    out.write("// Instructions:\n")
+    out.write("//   1. Copy and paste the following code into songs.h\n")
+    out.write("//   2. Add the \"song#\" variable into the song_list[] variable\n\n")
 
+    out.write("/* Song #{} */\n".format(song_num))
+    
     # Generate notes array for right buzzer
-    # Note: Need to pad beginning with silent note to line-up delta times
-    out.write("static const u16 song{}_note_right[] = {{ 0".format(song_num))
-    for note_info in notes_right:
-        out.write(", {}".format(note_info[0]))
-
-    out.write(" };\n")
-
-    # Generate notes duration array for right buzzer
-    # Note: Need to pad ending with an arbitrary duration to line-up delta times
-    out.write("static const u16 song{}_note_duration_right[] = {{ ".format(song_num))
-    for note_info in notes_right:
-        out.write("{}, ".format(note_info[1]))
-
-    out.write("1000 };\n")
-
+    out.write("static const u16 song{}_note_right[] = ".format(song_num))
+    num_notes = write_notes_to_formatted_array(out, notes_right)
+    print("\nRight buzzer: {} notes.".format(num_notes))
+    
+    out.write("static const u16 song{}_note_duration_right[] = ".format(song_num))
+    num_notes = write_notes_duration_to_formatted_array(out, notes_right)
+    print("Right buzzer: {} note durations.".format(num_notes))
+    
     # Generate notes array for left buzzer
-    # Note: Need to pad ending with an arbitrary duration to line-up delta times
-    out.write("static const u16 song{}_note_left[] = {{ 0".format(song_num))
-    for note_info in notes_left:
-        out.write(", {}".format(note_info[0]))
-
-    out.write(" };\n") # Pad ending
-
-    # Generate notes duration array for left buzzer
-    # Note: Need to pad beginning with silent note to line-up delta times
-    out.write("static const u16 song{}_note_duration_left[] = {{ ".format(song_num))
-    for note_info in notes_left:
-        out.write("{}, ".format(note_info[1]))
-
-    out.write("1000 };\n") # Pad ending
+    out.write("static const u16 song{}_note_left[] = ".format(song_num))
+    num_notes = write_notes_to_formatted_array(out, notes_left)
+    print("Left buzzer: {} notes.".format(num_notes))
+    
+    out.write("static const u16 song{}_note_duration_left[] = ".format(song_num))
+    num_notes = write_notes_duration_to_formatted_array(out, notes_left)
+    print("Left buzzer: {} note durations.".format(num_notes))
 
     # Generate information structure for this song
     song_prefix_str = "song" + str(song_num)
@@ -131,6 +127,54 @@ def generate_code(song_num, song_title, song_artist, notes_right, notes_left):
 
     out.close()
 
+# Converts list into formatted C-array for notes
+# Handles padding the first element in array with "NO" note to align delta ticks properly
+# Returns number of notes detected from list and written
+def write_notes_to_formatted_array(out, list):
+    # Pad beginning with 0 to align delta ticks
+    out.write("{ 0")
+    
+    notes_counter = 0
+    
+    for item in list:
+        note = item[0]
+        notes_counter += 1
+        
+        # Limit how many notes can be on a line
+        if((notes_counter % 1000) == 0):
+            out.write(",\n")
+            out.write("{}".format(note))
+        else:
+            out.write(", {}".format(note))
+            
+    out.write(" };\n")
+    
+    return notes_counter
+
+# Converts list into formatted C-array for note durations
+# Handles padding the last element in array with a short duration to align delta ticks properly
+# Returns number of notes detected from list and written
+def write_notes_duration_to_formatted_array(out, list):
+    out.write("{ ")
+    # Counts how many notes have been printed on the current line
+    notes_counter = 0
+    
+    for item in list:
+        note_dur = item[1]
+        notes_counter += 1
+        
+        # Limit how many notes can be on a line
+        if((notes_counter % 1000) == 0):
+            out.write("\n")
+            out.write("{}, ".format(note_dur))
+        else:
+            out.write("{}, ".format(note_dur))
+            
+    # Pad ending with a short duration to align delta ticks
+    out.write("1000 };\n")
+    
+    return notes_counter
+    
 # Parse arguments
 parser = argparse.ArgumentParser()
 parser.add_argument("-b1", help="Input MIDI track file to be played on buzzer 1 (right buzzer) of the EiE board")
@@ -143,9 +187,9 @@ else:
     print("\nBuzzer 1 (right buzzer) will not play anything.")
 
 if args.b2 is not None:
-    print("Parsing: {} for buzzer 2 (left buzzer)".format(args.b2))
+    print("Parsing: {} for buzzer 2 (left buzzer)\n".format(args.b2))
 else:
-    print("Buzzer 2 (left buzzer) will not play anything.")
+    print("Buzzer 2 (left buzzer) will not play anything.\n")
 
 # Parse the MIDI files for notes and corresponding durations into a list
 # If an input is not specified, it will return a list containing: 0 frequency and some arbitrary time (so buzzer will not play when loaded in firmware)
@@ -158,4 +202,5 @@ song_artist = raw_input("Enter the song artist: ")
 song_number = int(input("Enter the song number (for generating code variables): "))
 
 generate_code(song_number, song_title, song_artist, notes_list_right, notes_list_left)
+
 print("\nDone.")
