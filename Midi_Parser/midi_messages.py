@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # midi_messages.py
 # Description: Simply prints the messages and information of an input MIDI screen to console.
 #              Recommended to redirect console output to a text file using the > operator in command line.

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # midi_track_code_generator.py
 # Description: Takes 2 input MIDI track files and generates code for the EiE firmware.
 #              - 2 input MIDI files (ideally each containing a single track) for 2 buzzers on the EiE board.

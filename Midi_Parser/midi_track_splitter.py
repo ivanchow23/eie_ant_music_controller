@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # midi_track_splitter.py
 # Description: Takes an input MIDI file and splits each track into its own separate MIDI file.
 # By: Ivan Chow
