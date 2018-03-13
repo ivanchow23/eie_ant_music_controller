@@ -224,7 +224,7 @@ else:
 if args.b2 is not None:
     print("Parsing: {} for buzzer 2 (left buzzer) with octave offset {}\n".format(args.b2, args.o2))
 else:
-    print("\nParsing: Nothing for buzzer 2. It will not play anything.")
+    print("Parsing: Nothing for buzzer 2. It will not play anything.\n")
 
 # Parse the MIDI files for notes and corresponding durations into a list
 # If an input is not specified, it will return an empty list
