@@ -45,7 +45,15 @@ static const SongInfoType song1 = { "Hot Cross Buns", "?",
                                     song1_note_left, song1_note_duration_left, sizeof( song1_note_left ) / sizeof( song1_note_left[0] )
                                   };
 
+/* Song #2 */
+static const u16 song2_note_right[] = { 0, 523, 0, 523, 0, 784, 0, 784, 0, 880, 0, 880, 0, 784, 0, 698, 0, 698, 0, 659, 0, 659, 0, 587, 0, 587, 0, 523, 0, 784, 0, 784, 0, 698, 0, 698, 0, 659, 0, 659, 0, 587, 0, 784, 0, 784, 0, 698, 0, 698, 0, 659, 0, 659, 0, 587, 0, 523, 0, 523, 0, 784, 0, 784, 0, 880, 0, 880, 0, 784, 0, 698, 0, 698, 0, 659, 0, 659, 0, 587, 0, 587, 0, 523, 0 };
+static const u16 song2_note_duration_right[] = { 0, 600, 0, 600, 0, 600, 0, 600, 0, 600, 0, 600, 0, 1200, 0, 600, 0, 600, 0, 600, 0, 600, 0, 600, 0, 600, 0, 1200, 0, 600, 0, 600, 0, 600, 0, 600, 0, 600, 0, 600, 0, 1200, 0, 600, 0, 600, 0, 600, 0, 600, 0, 600, 0, 600, 0, 1200, 0, 600, 0, 600, 0, 600, 0, 600, 0, 600, 0, 600, 0, 1200, 0, 600, 0, 600, 0, 600, 0, 600, 0, 600, 0, 600, 0, 1200, 1000 };
+static const u16 song2_note_left[] = { 0 };
+static const u16 song2_note_duration_left[] = { 1000 };
+
+static const SongInfoType song2 = { "Twinkle Twinkle Little Star", "Or... The ABC's?", song2_note_right, song2_note_duration_right, sizeof( song2_note_right ) / sizeof( song2_note_right[0] ), song2_note_left, song2_note_duration_left, sizeof( song2_note_left ) / sizeof( song2_note_left[0] ) };
+
 /* List of songs */
-static const SongInfoType* song_list[] = { &song1 };
+static const SongInfoType* song_list[] = { &song1, &song2 };
 
 #endif /* __SONGS_H */
