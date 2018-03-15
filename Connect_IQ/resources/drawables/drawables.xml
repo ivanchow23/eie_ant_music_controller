@@ -7,4 +7,8 @@
     
     <!-- Image reference: http://m.sweetclipart.com/musical-notes-set-color-clip-art/ -->
     <bitmap id="MusicalNotes" filename="musical_notes_clipart_resized.png" />
+    
+    <bitmap id="PlayPauseIcon" filename="play-pause-icon.png" />
+    <bitmap id="PrevIcon" filename="prev-icon.png" />
+    <bitmap id="NextIcon" filename="next-icon.png" />
 </drawables>

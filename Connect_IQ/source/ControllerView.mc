@@ -17,11 +17,18 @@ enum {
 
 class ControllerView extends Ui.View {
 
-    hidden var itemCounter; // Reference to a counter object
+    hidden var itemCounter;         // Reference to a counter object
+    hidden var playPauseIconBitmap;
+    hidden var prevIconBitmap;
+    hidden var nextIconBitmap;
 
     function initialize(refCounter) {
         View.initialize();
         itemCounter = refCounter;
+        
+        playPauseIconBitmap = new Ui.Bitmap( { :rezId=>Rez.Drawables.PlayPauseIcon } );
+        prevIconBitmap = new Ui.Bitmap( { :rezId=>Rez.Drawables.PrevIcon } );
+        nextIconBitmap = new Ui.Bitmap( { :rezId=>Rez.Drawables.NextIcon } );
     }
     
     // Update the view
@@ -38,17 +45,39 @@ class ControllerView extends Ui.View {
         
         // Display play/pause icon
         if(controlIndex == CONTROL_VIEW_TOGGLE_PLAY_PAUSE_INDEX) {
-            dc.drawText(dc.getWidth() / 2, dc.getHeight() / 2, Gfx.FONT_MEDIUM, "Play / Pause", Gfx.TEXT_JUSTIFY_CENTER);
+            var bitmapDimensions = playPauseIconBitmap.getDimensions();
+            
+            playPauseIconBitmap.setLocation(getImageLocationCenteredX(dc, bitmapDimensions[0]) , getImageLocationCenteredY(dc, bitmapDimensions[1]));
+            playPauseIconBitmap.draw(dc);
+            dc.drawText(dc.getWidth() / 2, dc.getHeight() * 7 / 10, Gfx.FONT_SMALL, "Play || Pause", Gfx.TEXT_JUSTIFY_CENTER);
         }
         
         // Display previous song icon
         else if(controlIndex == CONTROL_VIEW_PREV_SONG_INDEX) {
-            dc.drawText(dc.getWidth() / 2, dc.getHeight() / 2, Gfx.FONT_MEDIUM, "Previous Song", Gfx.TEXT_JUSTIFY_CENTER);
+            var bitmapDimensions = prevIconBitmap.getDimensions();
+        
+            prevIconBitmap.setLocation(getImageLocationCenteredX(dc, bitmapDimensions[0]) , getImageLocationCenteredY(dc, bitmapDimensions[1]));
+            prevIconBitmap.draw(dc);
+            dc.drawText(dc.getWidth() / 2, dc.getHeight() * 7 / 10, Gfx.FONT_SMALL, "Previous Song", Gfx.TEXT_JUSTIFY_CENTER);
         }
         
         // Display next song icon
         else if(controlIndex == CONTROL_VIEW_NEXT_SONG_INDEX) {
-            dc.drawText(dc.getWidth() / 2, dc.getHeight() / 2, Gfx.FONT_MEDIUM, "Next Song", Gfx.TEXT_JUSTIFY_CENTER);
+            var bitmapDimensions = nextIconBitmap.getDimensions();
+            
+            nextIconBitmap.setLocation(getImageLocationCenteredX(dc, bitmapDimensions[0]) , getImageLocationCenteredY(dc, bitmapDimensions[1]));
+            nextIconBitmap.draw(dc);
+            dc.drawText(dc.getWidth() / 2, dc.getHeight() * 7 / 10, Gfx.FONT_SMALL, "Next Song", Gfx.TEXT_JUSTIFY_CENTER);
         }  
+    }
+    
+    // Returns point along the X-axis which will make the image centered with the device screen
+    static function getImageLocationCenteredX(dc, imageDimensionX) {
+        return ( (dc.getWidth() / 2) - (imageDimensionX / 2) );
+    }
+    
+    // Returns point along the Y-axis which will make the image centered with the device screen
+    static function getImageLocationCenteredY(dc, imageDimensionY) {
+        return ( (dc.getHeight() / 2) - (imageDimensionY / 2) );
     }
 }
