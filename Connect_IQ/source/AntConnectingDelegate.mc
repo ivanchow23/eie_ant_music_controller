@@ -22,11 +22,4 @@ class AntConnectingDelegate extends Ui.BehaviorDelegate {
         Ui.popView(Ui.SLIDE_IMMEDIATE);
         return true;
     }
-    
-    // Next button pressed: Open menu options
-    function onNextPage() {
-    
-        Ui.pushView(new Rez.Menus.MusicControlMenu(), new MusicControlMenuDelegate(antChannel), Ui.SLIDE_UP);
-        return true;
-    }
 }
