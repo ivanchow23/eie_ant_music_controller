@@ -105,13 +105,27 @@ def generate_code(song_num, song_title, song_artist, notes_right, notes_left):
 
     out.write("/* Song #{} */\n".format(song_num))
 
+    # Check lengths of each song based on delta note times
+    right_duration = get_note_array_duration_ms(notes_right)
+    left_duration = get_note_array_duration_ms(notes_left)
+    right_buzzer_pad_duration_ms = 1000
+    left_buzzer_pad_duration_ms = 1000
+
+    # If the right buzzer finishes early, pad the end array so it syncs up with the left buzzer
+    if(right_duration < left_duration):
+        right_buzzer_pad_duration_ms = right_buzzer_pad_duration_ms + (left_duration - right_duration)
+
+    # Same idea if the left buzzer finishes early
+    if(left_duration < right_duration):
+        left_buzzer_pad_duration_ms = left_buzzer_pad_duration_ms + (right_duration - left_duration)
+
     # Generate notes array for right buzzer
     out.write("static const u16 song{}_note_right[] = ".format(song_num))
     num_notes = write_notes_to_formatted_array(out, notes_right)
     print("\nRight buzzer: {} notes.".format(num_notes))
 
     out.write("static const u16 song{}_note_duration_right[] = ".format(song_num))
-    num_notes = write_notes_duration_to_formatted_array(out, notes_right)
+    num_notes = write_notes_duration_to_formatted_array(out, notes_right, right_buzzer_pad_duration_ms)
     print("Right buzzer: {} note durations.".format(num_notes))
 
     # Generate notes array for left buzzer
@@ -120,7 +134,7 @@ def generate_code(song_num, song_title, song_artist, notes_right, notes_left):
     print("Left buzzer: {} notes.".format(num_notes))
 
     out.write("static const u16 song{}_note_duration_left[] = ".format(song_num))
-    num_notes = write_notes_duration_to_formatted_array(out, notes_left)
+    num_notes = write_notes_duration_to_formatted_array(out, notes_left, left_buzzer_pad_duration_ms)
     print("Left buzzer: {} note durations.".format(num_notes))
 
     # Generate information structure for this song
@@ -130,6 +144,16 @@ def generate_code(song_num, song_title, song_artist, notes_right, notes_left):
     out.write("{}_note_left, {}_note_duration_left, sizeof( {}_note_left ) / sizeof( {}_note_left[0] ) }};\n".format(song_prefix_str, song_prefix_str, song_prefix_str, song_prefix_str))
 
     out.close()
+
+# Counts the duration of the given notes list based on its delta ticks in milliseconds
+def get_note_array_duration_ms(list):
+    duration_ms = 0
+
+    for item in list:
+        note_dur = item[1]
+        duration_ms += int(note_dur)
+
+    return duration_ms
 
 # Converts list into formatted C-array for notes
 # Handles padding the first element in array with "NO" note to align delta ticks properly
@@ -159,7 +183,7 @@ def write_notes_to_formatted_array(out, list):
 # Converts list into formatted C-array for note durations
 # Handles padding the last element in array with a short duration to align delta ticks properly
 # Returns number of notes detected from list and written
-def write_notes_duration_to_formatted_array(out, list):
+def write_notes_duration_to_formatted_array(out, list, end_padding_duration):
     out.write("{ ")
 
     # Start at 1 to account for note duration pad at the end
@@ -177,7 +201,7 @@ def write_notes_duration_to_formatted_array(out, list):
             out.write("{}, ".format(note_dur))
 
     # Pad ending with a short duration to align delta ticks
-    out.write("1000 };\n")
+    out.write("{} }};\n".format(end_padding_duration))
 
     return notes_counter
 
