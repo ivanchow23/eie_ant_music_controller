@@ -237,12 +237,12 @@ Description:
 static void ResetBuzzerVariables(void)
 {
   buzzer_right_timer = G_u32SystemTime1ms;
-  note_right_index = 0;
-  current_note_duration_right = song_list[song_index]->note_duration_right[note_right_index];
+  note_right_index = -1;
+  current_note_duration_right = 0;
 
   buzzer_left_timer = G_u32SystemTime1ms;
-  note_left_index = 0;
-  current_note_duration_left = song_list[song_index]->note_duration_left[note_left_index];
+  note_left_index = -1;
+  current_note_duration_left = 0;
 }
 
 /*----------------------------------------------------------------------------------------------------------------------
