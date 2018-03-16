@@ -2474,9 +2474,6 @@
                 <name>$PROJ_DIR$\..\application\main.h</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\application\midi_player.h</name>
-            </file>
-            <file>
                 <name>$PROJ_DIR$\..\..\firmware_common\application\music.h</name>
             </file>
             <file>
@@ -2502,9 +2499,6 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\application\main.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\application\midi_player.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\firmware_common\application\music_player.c</name>

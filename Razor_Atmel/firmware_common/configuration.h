@@ -90,7 +90,6 @@ Includes
 #include "music.h"
 #include "ant_channel.h"
 #include "lcd_control.h"
-#include "midi_player.h"
 #include "music_player.h"
 #include "version.h"
 
