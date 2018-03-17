@@ -2480,6 +2480,9 @@
                 <name>$PROJ_DIR$\..\..\firmware_common\application\music_player.h</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\..\..\firmware_common\application\songs.h</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\..\firmware_common\application\version.h</name>
             </file>
         </group>
