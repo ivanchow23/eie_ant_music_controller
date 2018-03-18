@@ -40,10 +40,11 @@ Constants / Definitions
 ***********************************************************************************************************************/
 #define LED_WHITE_FREQ_THRESHOLD    200
 #define LED_PURPLE_FREQ_THRESHOLD   400
-#define LED_BLUE_FREQ_THRESHOLD     800
-#define LED_CYAN_FREQ_THRESHOLD     1600
-#define LED_GREEN_FREQ_THRESHOLD    2000
-#define LED_YELLOW_FREQ_THRESHOLD   3000
+#define LED_BLUE_FREQ_THRESHOLD     600
+#define LED_CYAN_FREQ_THRESHOLD     800
+#define LED_GREEN_FREQ_THRESHOLD    1000
+#define LED_YELLOW_FREQ_THRESHOLD   1500
+#define LED_ORANGE_FREQ_THRESHOLD   2000
 
 /***********************************************************************************************************************
 Macros
@@ -373,15 +374,19 @@ static void FlashLed(u16 note_freq_right, u16 note_freq_left)
     {
       led_to_turn_on = GREEN;
     }
-    else
+    else if( frequency < LED_YELLOW_FREQ_THRESHOLD )
     {
       led_to_turn_on = YELLOW;
+    }
+    else
+    {
+      led_to_turn_on = ORANGE;
     }
   }
 
   // LEDs are ENUMs in the same order as how its tied on the board
-  // Skip the orange and red LED since they represent ANT channel status and error status
-  for( u8 i = 0; i < YELLOW; i++ )
+  // Skip the red LED since they represent ANT channel status
+  for( u8 i = 0; i < RED; i++ )
   {
     if( i == led_to_turn_on )
     {

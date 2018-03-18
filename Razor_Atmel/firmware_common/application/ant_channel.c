@@ -140,7 +140,7 @@ void AntChannelInitialize(void)
   {
     DebugPrintf( "Failed to configure ANT channel." );
     DebugLineFeed();
-    LedBlink( RED, LED_4HZ );
+    LedBlink( RED, LED_8HZ );
     AntChannel_StateMachine = AntChannelSM_Error;
   }
 }
@@ -252,7 +252,7 @@ static void AntChannelSM_Idle(void)
   // Error opening the channel
   else
   {
-    LedBlink( RED, LED_4HZ );
+    LedBlink( RED, LED_8HZ );
     AntChannel_StateMachine = AntChannelSM_Error;
   }
 }
@@ -267,7 +267,7 @@ static void AntChannelSM_WaitChannelOpen(void)
     DebugPrintf( "ANT channel open\r\n" );
 
     // Slow blinking LED indicates channel open, but no master broadcast received
-    LedBlink( ORANGE, LED_1HZ );
+    LedBlink( RED, LED_1HZ );
     AntChannel_StateMachine = AntChannelSM_ChannelOpen;
   }
 
@@ -303,7 +303,7 @@ static void AntChannelSM_ChannelOpen(void)
       AntQueueAcknowledgedMessage( ANT_CHANNEL_NUMBER, ant_msg_ack );
 
       // Show solid LED to indicate channel is formed and we received data
-      LedOn( ORANGE );
+      LedOn( RED );
     }
   }
 }
@@ -317,7 +317,7 @@ static void AntChannelSM_ChannelClosing(void)
   if( AntRadioStatusChannel( ANT_CHANNEL_NUMBER ) == ANT_CLOSED )
   {
     DebugPrintf( "ANT channel is closed\r\n" );
-    LedOff( ORANGE );
+    LedOff( RED );
     AntChannel_StateMachine = AntChannelSM_Idle;
   }
 }
