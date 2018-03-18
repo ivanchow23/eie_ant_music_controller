@@ -35,15 +35,20 @@ Public functions:
 #include "configuration.h"
 #include "songs.h"
 
-/**********************************************************************************************************************
+/***********************************************************************************************************************
 Constants / Definitions
-**********************************************************************************************************************/
+***********************************************************************************************************************/
 #define LED_WHITE_FREQ_THRESHOLD    200
 #define LED_PURPLE_FREQ_THRESHOLD   400
 #define LED_BLUE_FREQ_THRESHOLD     800
 #define LED_CYAN_FREQ_THRESHOLD     1600
 #define LED_GREEN_FREQ_THRESHOLD    2000
 #define LED_YELLOW_FREQ_THRESHOLD   3000
+
+/***********************************************************************************************************************
+Macros
+***********************************************************************************************************************/
+#define LED_ON( LED )               LedPWM( LED, LED_PWM_5 )
 
 /***********************************************************************************************************************
 Existing variables (defined in other files -- should all contain the "extern" keyword)
@@ -211,9 +216,6 @@ static void PlayNote(void)
   PWMAudioSetFrequency( BUZZER2, song_list[song_index]->note_left[note_left_index] );
   PWMAudioOn( BUZZER2 );
 
-  // LED control
-  FlashLed( song_list[song_index]->note_right[note_right_index], song_list[song_index]->note_left[note_left_index] );
-
   // Right buzzer timer
   if( IsTimeUp( &buzzer_right_timer, current_note_duration_right ) )
   {
@@ -222,6 +224,9 @@ static void PlayNote(void)
     {
       note_right_index = 0;
     }
+
+    // LED control
+    FlashLed( song_list[song_index]->note_right[note_right_index], song_list[song_index]->note_left[note_left_index] );
 
     buzzer_right_timer = G_u32SystemTime1ms;
     current_note_duration_right = song_list[song_index]->note_duration_right[note_right_index];
@@ -235,6 +240,9 @@ static void PlayNote(void)
     {
       note_left_index = 0;
     }
+
+    // LED control
+    FlashLed( song_list[song_index]->note_right[note_right_index], song_list[song_index]->note_left[note_left_index] );
 
     buzzer_left_timer = G_u32SystemTime1ms;
     current_note_duration_left = song_list[song_index]->note_duration_left[note_left_index];
@@ -377,7 +385,7 @@ static void FlashLed(u16 note_freq_right, u16 note_freq_left)
   {
     if( i == led_to_turn_on )
     {
-      LedOn( (LedNumberType)i );
+      LED_ON( (LedNumberType)i );
     }
     else
     {
