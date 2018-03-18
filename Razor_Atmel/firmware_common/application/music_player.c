@@ -35,6 +35,16 @@ Public functions:
 #include "configuration.h"
 #include "songs.h"
 
+/**********************************************************************************************************************
+Constants / Definitions
+**********************************************************************************************************************/
+#define LED_WHITE_FREQ_THRESHOLD    200
+#define LED_PURPLE_FREQ_THRESHOLD   400
+#define LED_BLUE_FREQ_THRESHOLD     800
+#define LED_CYAN_FREQ_THRESHOLD     1600
+#define LED_GREEN_FREQ_THRESHOLD    2000
+#define LED_YELLOW_FREQ_THRESHOLD   3000
+
 /***********************************************************************************************************************
 Existing variables (defined in other files -- should all contain the "extern" keyword)
 ***********************************************************************************************************************/
@@ -66,6 +76,7 @@ static void PlayNote(void);
 static void ResetBuzzerVariables(void);
 static void PreviousSong(void);
 static void NextSong(void);
+static void FlashLed(u16 note_freq_right, u16 note_freq_left);
 
 /***********************************************************************************************************************
 State Machine Declarations
@@ -200,6 +211,9 @@ static void PlayNote(void)
   PWMAudioSetFrequency( BUZZER2, song_list[song_index]->note_left[note_left_index] );
   PWMAudioOn( BUZZER2 );
 
+  // LED control
+  FlashLed( song_list[song_index]->note_right[note_right_index], song_list[song_index]->note_left[note_left_index] );
+
   // Right buzzer timer
   if( IsTimeUp( &buzzer_right_timer, current_note_duration_right ) )
   {
@@ -295,6 +309,81 @@ static void NextSong(void)
 
   // Automatically move to new state
   MusicPlayer_StateMachine = MusicPlayerSM_Play;
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+Function: FlashLed
+
+Description:
+  Flashes an LED based on which notes are being played.
+  If one frequency is zero, and the other is non-zero, the zero frequency is ignored.
+  If both buzzers frequencies are non-zero, then the frequency is averaged.
+  The resulting frequency will be used to determine which LED should be flashed.
+*/
+static void FlashLed(u16 note_freq_right, u16 note_freq_left)
+{
+  u8  led_to_turn_on = -1;
+  u16 frequency = 0;
+
+  // Use left note frequency if right note is currently zero
+  if( note_freq_right == 0 )
+  {
+    frequency = note_freq_left;
+  }
+  // Use right note frequency if left note is currently zero
+  else if( note_freq_left == 0 )
+  {
+    frequency = note_freq_right;
+  }
+  // Take the average of the two buzzer frequencies if both are non-zero
+  else if( ( note_freq_right != 0 ) && ( note_freq_left != 0 ) )
+  {
+    frequency = ( note_freq_right + note_freq_left ) / 2;
+  }
+
+  // Determine which LED to turn on
+  // If frequency is 0 (both buzzers off), then it should not turn an LED on
+  if( frequency != 0 )
+  {
+    if( frequency < LED_WHITE_FREQ_THRESHOLD )
+    {
+      led_to_turn_on = WHITE;
+    }
+    else if( frequency < LED_PURPLE_FREQ_THRESHOLD )
+    {
+      led_to_turn_on = PURPLE;
+    }
+    else if( frequency < LED_BLUE_FREQ_THRESHOLD )
+    {
+      led_to_turn_on = BLUE;
+    }
+    else if( frequency < LED_CYAN_FREQ_THRESHOLD )
+    {
+      led_to_turn_on = CYAN;
+    }
+    else if( frequency < LED_GREEN_FREQ_THRESHOLD )
+    {
+      led_to_turn_on = GREEN;
+    }
+    else
+    {
+      led_to_turn_on = YELLOW;
+    }
+  }
+
+  // LEDs are ENUMs in the same order as how its tied on the board
+  // Skip the orange and red LED since they represent ANT channel status and error status
+  for( u8 i = 0; i < YELLOW; i++ )
+  {
+    if( i == led_to_turn_on )
+    {
+      LedOn( (LedNumberType)i );
+    }
+    else
+    {
+      LedOff( (LedNumberType)i );
+    }
+  }
 }
 
 /**********************************************************************************************************************
