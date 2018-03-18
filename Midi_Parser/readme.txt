@@ -19,7 +19,7 @@ Purpose: Generates code to be copied and pasted into the EiE firmware based
          on up to 2 MIDI track file inputs. Typically, you would run 
          the midi_track_splitter script, choose the desired tracks to use,
          then run this script. Also allows for pass-in arguments for shifting
-         octaves, because buzzers on the board can't play lower frequencies.
+         notes, because buzzers on the board can't play lower frequencies.
          
 Usage: midi_code_gen.py -b1 <input file for buzzer1> -b2 <input file for buzzer2>
-                        -o1 <octave shift> -o2 <octave shift>
+                        -n1 <note shift> -n2 <note shift>
