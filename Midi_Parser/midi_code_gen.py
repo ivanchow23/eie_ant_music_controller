@@ -114,10 +114,18 @@ def generate_code(song_num, song_title, song_artist, notes_right, notes_left):
     # If the right buzzer finishes early, pad the end array so it syncs up with the left buzzer
     if(right_duration < left_duration):
         right_buzzer_pad_duration_ms = right_buzzer_pad_duration_ms + (left_duration - right_duration)
+        
+        # uint16 max
+        if right_buzzer_pad_duration_ms > 65535:
+            right_buzzer_pad_duration_ms = 65535
 
     # Same idea if the left buzzer finishes early
     if(left_duration < right_duration):
         left_buzzer_pad_duration_ms = left_buzzer_pad_duration_ms + (right_duration - left_duration)
+        
+        # uint16 max
+        if left_buzzer_pad_duration_ms > 65535:
+            left_buzzer_pad_duration_ms = 65535
 
     # Generate notes array for right buzzer
     out.write("static const u16 song{}_note_right[] = ".format(song_num))
