@@ -49,14 +49,18 @@ def parse_midi(mid_file):
         except IOError:
             print("Could not save file: " + out_mid_file_name)
 
-# A fairly inefficient way to get the first tempo message of the entire MIDI file
+# A fairly inefficient way to get the latest tempo message of the file.
 def find_tempo(midi_file):
+    tempo = 0
+    
     for i, track in enumerate(midi_file.tracks):
         for msg in track:
             msg_dict = msg.dict()
 
             if 'tempo' in msg_dict:
-                return msg_dict['tempo']
+                tempo = msg_dict['tempo']
+                
+    return tempo
 
 # A fairly inefficient way to check if a track already has a tempo message in it
 def has_tempo(track):
