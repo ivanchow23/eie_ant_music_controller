@@ -18,7 +18,7 @@ LOW_NOTE_FREQ_THRESHOLD = 100
 
 # Parses the given MIDI file and returns a list of notes (in frequency) and note durations (in milliseconds)
 # If MIDI file is not specified, returns an empty list
-def parse_notes_and_duration(input_mid_file, octave_shift):
+def parse_notes_and_duration(input_mid_file, note_shift):
     # No input file
     if input_mid_file is None:
         return []
@@ -48,7 +48,7 @@ def parse_notes_and_duration(input_mid_file, octave_shift):
                 else:
                     # Convert note message number into frequency
                     note_val = int(msg_dict['note'])
-                    note_freq = midi_note_to_freq(note_val, octave_shift)
+                    note_freq = midi_note_to_freq(note_val, note_shift)
 
                     notes_list.append( (note_freq, delta_time_ms) )
 
@@ -85,8 +85,8 @@ def midi_ticks_to_ms(ticks, ticks_per_beat, tempo):
 # Converts a MIDI note value into frequency
 # Rounded to the nearest integer
 # Reference: https://newt.phys.unsw.edu.au/jw/notes.html
-def midi_note_to_freq(m, octave_shift):
-    freq = ( 2**( ( m + (octave_shift * 12) - 69 ) / 12.0 ) ) * 440
+def midi_note_to_freq(m, note_shift):
+    freq = ( 2**( ( (m + note_shift) - 69 ) / 12.0 ) ) * 440
     return int(round(freq))
 
 # Generates code with the given input information
@@ -236,24 +236,24 @@ def check_note_frequencies(notes_list, buzzer_id):
 parser = argparse.ArgumentParser()
 parser.add_argument("-b1", help="Input MIDI track file to be played on buzzer 1 (right buzzer) of the EiE board")
 parser.add_argument("-b2", help="Input MIDI track file to be played on buzzer 2 (left buzzer) of the EiE board")
-parser.add_argument("-o1", type=int, default=0, help="Shift MIDI track octave for buzzer 1 (right buzzer). Inputs can be 0, 1, 2, -1, etc.")
-parser.add_argument("-o2", type=int, default=0, help="Shift MIDI track octave for buzzer 2 (left buzzer). Inputs can be 0, 1, 2, -1, etc.")
+parser.add_argument("-n1", type=int, default=0, help="Shift MIDI track note for buzzer 1 (right buzzer). Inputs can be 0, 1, 2, -1, etc.")
+parser.add_argument("-n2", type=int, default=0, help="Shift MIDI track note for buzzer 2 (left buzzer). Inputs can be 0, 1, 2, -1, etc.")
 args = parser.parse_args()
 
 if args.b1 is not None:
-    print("\nParsing: {} for buzzer 1 (right buzzer) with octave offset {}".format(args.b1, args.o1))
+    print("\nParsing: {} for buzzer 1 (right buzzer) with note offset {}".format(args.b1, args.n1))
 else:
     print("\nParsing: Nothing for buzzer 1. It will not play anything.")
 
 if args.b2 is not None:
-    print("Parsing: {} for buzzer 2 (left buzzer) with octave offset {}\n".format(args.b2, args.o2))
+    print("Parsing: {} for buzzer 2 (left buzzer) with note offset {}\n".format(args.b2, args.n2))
 else:
     print("Parsing: Nothing for buzzer 2. It will not play anything.\n")
 
 # Parse the MIDI files for notes and corresponding durations into a list
 # If an input is not specified, it will return an empty list
-notes_list_right = parse_notes_and_duration(args.b1, args.o1)
-notes_list_left = parse_notes_and_duration(args.b2, args.o2)
+notes_list_right = parse_notes_and_duration(args.b1, args.n1)
+notes_list_left = parse_notes_and_duration(args.b2, args.n2)
 
 # Check to make sure notes are not below a certain frequency - found that the EiE board struggles with playing frequencies below 100 Hz.
 check_note_frequencies(notes_list_right, 1)
