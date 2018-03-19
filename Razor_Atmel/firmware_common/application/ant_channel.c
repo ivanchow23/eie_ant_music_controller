@@ -36,6 +36,9 @@ Constants / Definitions
 
 #define ANT_MESSAGE_MAGIC_NUMBER        (u8)( 0xC5 )
 
+/* Set to 1 to send ACK messages */
+#define ANT_SEND_ACK                    0
+
 /***********************************************************************************************************************
 Existing variables (defined in other files -- should all contain the "extern" keyword)
 ***********************************************************************************************************************/
@@ -299,8 +302,10 @@ static void AntChannelSM_ChannelOpen(void)
       // Handle the latest message
       ProcessAntMessage();
 
-      // Send acknowledge
-      AntQueueAcknowledgedMessage( ANT_CHANNEL_NUMBER, ant_msg_ack );
+      #if( ANT_SEND_ACK )
+        // Send acknowledge
+        AntQueueAcknowledgedMessage( ANT_CHANNEL_NUMBER, ant_msg_ack );
+      #endif
 
       // Show solid LED to indicate channel is formed and we received data
       LedOn( RED );
