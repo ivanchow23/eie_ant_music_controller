@@ -35,6 +35,11 @@ class ControllerDelegate extends Ui.BehaviorDelegate {
     function onSelect() {
         var count = itemCounter.getCount();
         
+        if(count == CONTROL_VIEW_COMING_SOON_INDEX) {
+            Ui.pushView(new AccelDebugView(), new AccelDebugDelegate(), Ui.SLIDE_IMMEDIATE);
+            return true;
+        }
+        
         // Conveniently, the item counter should be perfectly mapped to the ANT send message method
         antChannel.sendMessage(count);
     }
