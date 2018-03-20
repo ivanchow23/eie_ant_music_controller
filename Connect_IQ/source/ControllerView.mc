@@ -73,7 +73,7 @@ class ControllerView extends Ui.View {
         
         // TODO: IC - Used for debugging for now
         else if(controlIndex == CONTROL_VIEW_COMING_SOON_INDEX) {
-            dc.drawText(dc.getWidth() / 2, dc.getHeight() / 2, Gfx.FONT_SMALL, "Coming Soon!", Gfx.TEXT_JUSTIFY_CENTER);
+            dc.drawText(dc.getWidth() / 2, dc.getHeight() / 2, Gfx.FONT_SMALL, "Gesture Control", Gfx.TEXT_JUSTIFY_CENTER);
         }
     }
     
