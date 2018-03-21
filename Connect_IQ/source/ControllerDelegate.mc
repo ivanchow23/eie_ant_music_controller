@@ -36,7 +36,7 @@ class ControllerDelegate extends Ui.BehaviorDelegate {
         var count = itemCounter.getCount();
         
         if(count == CONTROL_VIEW_COMING_SOON_INDEX) {
-            Ui.pushView(new GestureControlView(), new GestureControlDelegate(), Ui.SLIDE_IMMEDIATE);
+            Ui.pushView(new GestureControlView(antChannel), new GestureControlDelegate(antChannel), Ui.SLIDE_IMMEDIATE);
             return true;
         }
         

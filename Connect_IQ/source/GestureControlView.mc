@@ -15,6 +15,9 @@ enum {
 
 class GestureControlView extends Ui.View {
 
+    // Reference to an ANT channel
+    hidden var antChannel;
+    
     // Timer to take a sample
     hidden var sampleTimer;
     
@@ -69,8 +72,10 @@ class GestureControlView extends Ui.View {
     const Y_AXIS_TILT_BACKWARD_DC_THRESHOLD       = -450;  // Y-axis DC - needs to pass this threshold (more negative)
     const Z_AXIS_TILT_BACKWARD_DC_THRESHOLD       = -900;  // Z-axis DC - needs to pass this threshold (more positive)
 
-    function initialize() {
+    function initialize(refChannel) {
         View.initialize();
+        
+        antChannel = refChannel;
         
         sampleTimer = new Timer.Timer();
         sampleTimer.start(method(:sample), SAMPLE_PERIOD_MS, true);
@@ -202,7 +207,8 @@ class GestureControlView extends Ui.View {
         accelZBufferIndex = 0;
     }
     
-    // Algorithm that uses the data in the accel buffers 
+    // Algorithm that uses the data in the accel buffers to determine gesture
+    // Sends an ANT message if a gesture is detected to change songs
     static function updateGestureState() {
     
         // Currently in an unknown state - searching for "raised static" gesture
@@ -228,6 +234,7 @@ class GestureControlView extends Ui.View {
                 (currAccelY >= Y_AXIS_TILT_FORWARD_DC_THRESHOLD) && (currAccelZ >= Z_AXIS_TILT_FORWARD_DC_THRESHOLD) ) {
                 
                 tiltForwardCount++;
+                antChannel.sendMessage(ANT_MSG_NEXT_SONG);
                 
                 // Reset
                 clearBuffers();
@@ -242,6 +249,7 @@ class GestureControlView extends Ui.View {
                      (currAccelY <= Y_AXIS_TILT_BACKWARD_DC_THRESHOLD) && (currAccelZ >= Z_AXIS_TILT_BACKWARD_DC_THRESHOLD) ) {
                      
                 tiltBackCount++;
+                antChannel.sendMessage(ANT_MSG_PREVIOUS_SONG);
                 
                 // Reset
                 clearBuffers();
