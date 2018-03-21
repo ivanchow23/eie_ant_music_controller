@@ -7,8 +7,15 @@ using Toybox.WatchUi as Ui;
 using Toybox.Graphics as Gfx;
 using Toybox.Sensor as Sensor;
 
+// Contains gesture control states
+enum {
+    GESTURE_UNKNOWN = 0,
+    GESTURE_RAISED_STATIC = 1
+}
+
 class AccelDebugView extends Ui.View {
 
+    // Timer to take a sample
     hidden var sampleTimer;
     
     // Accel buffer variables
@@ -24,9 +31,24 @@ class AccelDebugView extends Ui.View {
     hidden var accelYAvg;
     hidden var accelZAvg;
     
+    // State machine variable
+    hidden var state;
+    
+    // Debug counter for how many times "raised static" gesture was detected
+    hidden var raisedCount;
+    
+    // Sampling variables
     const SAMPLE_PERIOD_MS = 50;
     const BUFFER_SECONDS   = 1;
     const BUFFER_SIZE      = (1000 / SAMPLE_PERIOD_MS) * BUFFER_SECONDS;
+    
+    // "Raised static" state thresholds
+    const X_AXIS_RAISED_STATIC_DC_THRESHOLD       = 0;     // X-axis DC 
+    const X_AXIS_RAISED_STATIC_DC_THRESHOLD_ERROR = 200;   // Tolerance in X-axis (+/-)
+    const Y_AXIS_RAISED_STATIC_DC_THRESHOLD       = 0;     // Y-axis DC
+    const Y_AXIS_RAISED_STATIC_DC_THRESHOLD_ERROR = 200;   // Tolerance in Y-axis (+/-)
+    const Z_AXIS_RAISED_STATIC_DC_THRESHOLD       = -1000; // Z-axis DC threshold
+    const Z_AXIS_RAISED_STATIC_DC_THRESHOLD_ERROR =  100;  // Tolerance in Z-axis (+/-) 
 
     function initialize() {
         View.initialize();
@@ -50,6 +72,9 @@ class AccelDebugView extends Ui.View {
         accelXAvg = 0;
         accelYAvg = 0;
         accelZAvg = 0;
+        
+        state = GESTURE_UNKNOWN;
+        raisedCount = 0;
     }
     
     // Update the view
@@ -65,6 +90,9 @@ class AccelDebugView extends Ui.View {
         dc.drawText(dc.getWidth() / 2, dc.getHeight() / 2, Gfx.FONT_XTINY, "X (Avg): " + accelXAvg.toString(), Gfx.TEXT_JUSTIFY_CENTER);
         dc.drawText(dc.getWidth() / 2, dc.getHeight() * 3 / 5, Gfx.FONT_XTINY, "Y (Avg): " + accelYAvg.toString(), Gfx.TEXT_JUSTIFY_CENTER);
         dc.drawText(dc.getWidth() / 2, dc.getHeight() * 7 / 10, Gfx.FONT_XTINY, "Z (Avg): " + accelZAvg.toString(), Gfx.TEXT_JUSTIFY_CENTER);
+        
+        // Display count on screen
+        dc.drawText(dc.getWidth() / 2, dc.getHeight() * 4 / 5, Gfx.FONT_XTINY, raisedCount.toString(), Gfx.TEXT_JUSTIFY_CENTER);
     }
     
     // Takes a sample of the accelerometer and stores X, Y, and Z-axis values in their respective buffers
@@ -82,6 +110,7 @@ class AccelDebugView extends Ui.View {
             var accelZ = accel[2];
             
             pushSamples(accelX, accelY, accelZ);
+            updateGestureState();
         }
         
         Ui.requestUpdate();
@@ -130,5 +159,47 @@ class AccelDebugView extends Ui.View {
         accelXAvg = accelXSum / BUFFER_SIZE;
         accelYAvg = accelYSum / BUFFER_SIZE;
         accelZAvg = accelZSum / BUFFER_SIZE;
+    }
+    
+    // Algorithm that uses the data in the accel buffers 
+    static function updateGestureState() {
+    
+        // Currently in an unknown state - searching for "raised static" gesture
+        // ie: Holding arm up in front of you, with the watch facing up
+        if(state == GESTURE_UNKNOWN) {
+        
+            // Switch states if gesture is detected
+            if( isWithinBounds(accelXAvg, X_AXIS_RAISED_STATIC_DC_THRESHOLD, X_AXIS_RAISED_STATIC_DC_THRESHOLD_ERROR) &&
+                isWithinBounds(accelYAvg, Y_AXIS_RAISED_STATIC_DC_THRESHOLD, Y_AXIS_RAISED_STATIC_DC_THRESHOLD_ERROR) &&
+                isWithinBounds(accelZAvg, Z_AXIS_RAISED_STATIC_DC_THRESHOLD, Z_AXIS_RAISED_STATIC_DC_THRESHOLD_ERROR) ) {
+                
+                raisedCount++;
+                state = GESTURE_RAISED_STATIC;
+            }
+        }
+        // Currently in "raised static" gesture state
+        else if(state == GESTURE_RAISED_STATIC) {
+            // Break out this state when the thresholds are not satisified
+            if( !( isWithinBounds(accelXAvg, X_AXIS_RAISED_STATIC_DC_THRESHOLD, X_AXIS_RAISED_STATIC_DC_THRESHOLD_ERROR) &&
+                   isWithinBounds(accelYAvg, Y_AXIS_RAISED_STATIC_DC_THRESHOLD, Y_AXIS_RAISED_STATIC_DC_THRESHOLD_ERROR) &&
+                   isWithinBounds(accelZAvg, Z_AXIS_RAISED_STATIC_DC_THRESHOLD, Z_AXIS_RAISED_STATIC_DC_THRESHOLD_ERROR) ) ) {
+                
+                state = GESTURE_UNKNOWN;
+            }
+        }
+    }
+    
+    // Returns true if a value is within the bounds of the threshold with some given tolerance
+    // ie: (threshold-tolerance) <= val <= (threshold+tolerance)
+    static function isWithinBounds(val, threshold, tolerance) {
+        var lowThreshold = threshold - tolerance;
+        var highThreshold = threshold + tolerance;
+        
+        if( (val >= lowThreshold) && (val <= highThreshold) ) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }
