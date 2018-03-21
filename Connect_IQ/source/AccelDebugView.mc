@@ -31,11 +31,18 @@ class AccelDebugView extends Ui.View {
     hidden var accelYAvg;
     hidden var accelZAvg;
     
+    // Latest accel sample
+    hidden var currAccelX;
+    hidden var currAccelY;
+    hidden var currAccelZ;
+    
     // State machine variable
     hidden var state;
     
-    // Debug counter for how many times "raised static" gesture was detected
+    // Debug gesture counters
     hidden var raisedCount;
+    hidden var tiltForwardCount; // Forward relative to wearing watch on left wrist
+    hidden var tiltBackCount;    // Back relative to wearing watch on left wrist
     
     // Sampling variables
     const SAMPLE_PERIOD_MS = 50;
@@ -49,6 +56,18 @@ class AccelDebugView extends Ui.View {
     const Y_AXIS_RAISED_STATIC_DC_THRESHOLD_ERROR = 200;   // Tolerance in Y-axis (+/-)
     const Z_AXIS_RAISED_STATIC_DC_THRESHOLD       = -1000; // Z-axis DC threshold
     const Z_AXIS_RAISED_STATIC_DC_THRESHOLD_ERROR =  100;  // Tolerance in Z-axis (+/-) 
+    
+    // "Tilt forward" thresholds
+    const X_AXIS_TILT_FORWARD_DC_THRESHOLD       = 0;     // X-axis DC
+    const X_AXIS_TILT_FORWARD_DC_THRESHOLD_ERROR = 200;   // Tolerance in X-axis (+/-)
+    const Y_AXIS_TILT_FORWARD_DC_THRESHOLD       = 500;   // Y-axis DC - needs to pass this threshold (more positive)
+    const Z_AXIS_TILT_FORWARD_DC_THRESHOLD       = -800;  // Z-axis DC - needs to pass this threshold (more positive)
+    
+    // "Tilt backward" thresholds
+    const X_AXIS_TILT_BACKWARD_DC_THRESHOLD       = 0;     // X-axis DC
+    const X_AXIS_TILT_BACKWARD_DC_THRESHOLD_ERROR = 200;   // Tolerance in X-axis (+/-)
+    const Y_AXIS_TILT_BACKWARD_DC_THRESHOLD       = -500;  // Y-axis DC - needs to pass this threshold (more negative)
+    const Z_AXIS_TILT_BACKWARD_DC_THRESHOLD       = -800;  // Z-axis DC - needs to pass this threshold (more positive)
 
     function initialize() {
         View.initialize();
@@ -72,9 +91,14 @@ class AccelDebugView extends Ui.View {
         accelXAvg = 0;
         accelYAvg = 0;
         accelZAvg = 0;
+        currAccelX = 0;
+        currAccelY = 0;
+        currAccelZ = 0;
         
         state = GESTURE_UNKNOWN;
         raisedCount = 0;
+        tiltForwardCount = 0;
+        tiltBackCount = 0;
     }
     
     // Update the view
@@ -91,8 +115,9 @@ class AccelDebugView extends Ui.View {
         dc.drawText(dc.getWidth() / 2, dc.getHeight() * 3 / 5, Gfx.FONT_XTINY, "Y (Avg): " + accelYAvg.toString(), Gfx.TEXT_JUSTIFY_CENTER);
         dc.drawText(dc.getWidth() / 2, dc.getHeight() * 7 / 10, Gfx.FONT_XTINY, "Z (Avg): " + accelZAvg.toString(), Gfx.TEXT_JUSTIFY_CENTER);
         
-        // Display count on screen
-        dc.drawText(dc.getWidth() / 2, dc.getHeight() * 4 / 5, Gfx.FONT_XTINY, raisedCount.toString(), Gfx.TEXT_JUSTIFY_CENTER);
+        // Display gesture counts on screen (state, tilt forward count, tile back count)
+        var countString = state.toString() + " " + tiltForwardCount + " " + tiltBackCount;
+        dc.drawText(dc.getWidth() / 2, dc.getHeight() * 4 / 5, Gfx.FONT_XTINY, countString, Gfx.TEXT_JUSTIFY_CENTER);
     }
     
     // Takes a sample of the accelerometer and stores X, Y, and Z-axis values in their respective buffers
@@ -105,11 +130,13 @@ class AccelDebugView extends Ui.View {
         {
             accel = sensorInfo.accel;
             
-            var accelX = accel[0];
-            var accelY = accel[1];
-            var accelZ = accel[2];
+            // Update current accel values
+            currAccelX = accel[0];
+            currAccelY = accel[1];
+            currAccelZ = accel[2];
             
-            pushSamples(accelX, accelY, accelZ);
+            // Add samples into buffer and update if gesture has changed
+            pushSamples(currAccelX, currAccelY, currAccelZ);
             updateGestureState();
         }
         
@@ -179,8 +206,27 @@ class AccelDebugView extends Ui.View {
         }
         // Currently in "raised static" gesture state
         else if(state == GESTURE_RAISED_STATIC) {
+        
+            // Check for "tilt forward" motion
+            // X-axis should remain relative stable
+            // Y and Z-axis should have increased 
+            if( isWithinBounds(accelXAvg, X_AXIS_TILT_FORWARD_DC_THRESHOLD, X_AXIS_TILT_FORWARD_DC_THRESHOLD_ERROR) &&
+                (currAccelY >= Y_AXIS_TILT_FORWARD_DC_THRESHOLD) && (currAccelZ >= Z_AXIS_TILT_FORWARD_DC_THRESHOLD) ) {
+                
+                tiltForwardCount++;
+                state = GESTURE_UNKNOWN; // Reset
+            }
+            
+            // Check for "tilt back" motion
+            else if( isWithinBounds(accelXAvg, X_AXIS_TILT_BACKWARD_DC_THRESHOLD, X_AXIS_TILT_BACKWARD_DC_THRESHOLD_ERROR) &&
+                     (currAccelY <= Y_AXIS_TILT_BACKWARD_DC_THRESHOLD) && (currAccelZ >= Z_AXIS_TILT_BACKWARD_DC_THRESHOLD) ) {
+                     
+                tiltBackCount++;
+                state = GESTURE_UNKNOWN; // Reset
+             }
+
             // Break out this state when the thresholds are not satisified
-            if( !( isWithinBounds(accelXAvg, X_AXIS_RAISED_STATIC_DC_THRESHOLD, X_AXIS_RAISED_STATIC_DC_THRESHOLD_ERROR) &&
+            else if( !( isWithinBounds(accelXAvg, X_AXIS_RAISED_STATIC_DC_THRESHOLD, X_AXIS_RAISED_STATIC_DC_THRESHOLD_ERROR) &&
                    isWithinBounds(accelYAvg, Y_AXIS_RAISED_STATIC_DC_THRESHOLD, Y_AXIS_RAISED_STATIC_DC_THRESHOLD_ERROR) &&
                    isWithinBounds(accelZAvg, Z_AXIS_RAISED_STATIC_DC_THRESHOLD, Z_AXIS_RAISED_STATIC_DC_THRESHOLD_ERROR) ) ) {
                 
