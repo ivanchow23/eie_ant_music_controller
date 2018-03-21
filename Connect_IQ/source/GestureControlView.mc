@@ -125,6 +125,13 @@ class GestureControlView extends Ui.View {
         dc.drawText(dc.getWidth() / 2, dc.getHeight() * 4 / 5, Gfx.FONT_XTINY, countString, Gfx.TEXT_JUSTIFY_CENTER);
     }
     
+    // Called when this View is removed from the screen. Save the
+    // state of this View here. This includes freeing resources from
+    // memory.
+    function onHide() {
+        sampleTimer.stop();
+    }
+    
     // Takes a sample of the accelerometer and stores X, Y, and Z-axis values in their respective buffers
     static function sample() {
     
