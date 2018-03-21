@@ -35,7 +35,8 @@ class ControllerDelegate extends Ui.BehaviorDelegate {
     function onSelect() {
         var count = itemCounter.getCount();
         
-        if(count == CONTROL_VIEW_COMING_SOON_INDEX) {
+        // Move into gesture controls page if this is what is selected
+        if(count == CONTROL_VIEW_GESTURE_CONTROLS_INDEX) {
             Ui.pushView(new GestureControlView(antChannel), new GestureControlDelegate(antChannel), Ui.SLIDE_IMMEDIATE);
             return true;
         }

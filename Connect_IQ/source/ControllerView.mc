@@ -11,7 +11,7 @@ enum {
     CONTROL_VIEW_TOGGLE_PLAY_PAUSE_INDEX = 0,
     CONTROL_VIEW_PREV_SONG_INDEX,
     CONTROL_VIEW_NEXT_SONG_INDEX,
-    CONTROL_VIEW_COMING_SOON_INDEX,
+    CONTROL_VIEW_GESTURE_CONTROLS_INDEX,
     
     CONTROL_VIEW_NUM_ITEMS
 }
@@ -71,8 +71,8 @@ class ControllerView extends Ui.View {
             dc.drawText(dc.getWidth() / 2, dc.getHeight() * 7 / 10, Gfx.FONT_SMALL, "Next Song", Gfx.TEXT_JUSTIFY_CENTER);
         }  
         
-        // TODO: IC - Used for debugging for now
-        else if(controlIndex == CONTROL_VIEW_COMING_SOON_INDEX) {
+        // Display gesture control option
+        else if(controlIndex == CONTROL_VIEW_GESTURE_CONTROLS_INDEX) {
             dc.drawText(dc.getWidth() / 2, dc.getHeight() / 2, Gfx.FONT_SMALL, "Gesture Control", Gfx.TEXT_JUSTIFY_CENTER);
         }
     }
