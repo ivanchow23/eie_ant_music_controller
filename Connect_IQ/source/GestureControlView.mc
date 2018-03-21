@@ -10,7 +10,7 @@ using Toybox.Sensor as Sensor;
 // Contains gesture control states
 enum {
     GESTURE_UNKNOWN = 0,
-    GESTURE_RAISED_STATIC = 1
+    GESTURE_HOLD_FLAT = 1
 }
 
 class GestureControlView extends Ui.View {
@@ -112,17 +112,25 @@ class GestureControlView extends Ui.View {
         // Call the parent onUpdate function to redraw the layout
         View.onUpdate(dc);
         
+        // Display instructions on using gesture controls
         dc.setColor(Gfx.COLOR_WHITE, Gfx.COLOR_TRANSPARENT);
-        dc.drawText(dc.getWidth() / 2, dc.getHeight() / 3, Gfx.FONT_SMALL, "Sensor Debug page", Gfx.TEXT_JUSTIFY_CENTER);
-
-        // Display accel values to screen
-        dc.drawText(dc.getWidth() / 2, dc.getHeight() / 2, Gfx.FONT_XTINY, "X (Avg): " + accelXAvg.toString(), Gfx.TEXT_JUSTIFY_CENTER);
-        dc.drawText(dc.getWidth() / 2, dc.getHeight() * 3 / 5, Gfx.FONT_XTINY, "Y (Avg): " + accelYAvg.toString(), Gfx.TEXT_JUSTIFY_CENTER);
-        dc.drawText(dc.getWidth() / 2, dc.getHeight() * 7 / 10, Gfx.FONT_XTINY, "Z (Avg): " + accelZAvg.toString(), Gfx.TEXT_JUSTIFY_CENTER);
+        dc.drawText(dc.getWidth() / 2, dc.getHeight() / 5, Gfx.FONT_TINY, "Gesture Control", Gfx.TEXT_JUSTIFY_CENTER);
         
-        // Display gesture counts on screen (state, tilt forward count, tile back count)
-        var countString = state.toString() + " " + tiltForwardCount + " " + tiltBackCount;
-        dc.drawText(dc.getWidth() / 2, dc.getHeight() * 4 / 5, Gfx.FONT_XTINY, countString, Gfx.TEXT_JUSTIFY_CENTER);
+        // Prompt user to hold the watch flat
+        if(state == GESTURE_UNKNOWN) {
+            dc.setColor(Gfx.COLOR_YELLOW, Gfx.COLOR_TRANSPARENT);
+            dc.drawText(dc.getWidth() / 2, dc.getHeight() * 2 / 5, Gfx.FONT_XTINY, "Hold watch flat and still", Gfx.TEXT_JUSTIFY_CENTER);
+        }
+        // Prompt user to tilt watch to change songs
+        else if(state == GESTURE_HOLD_FLAT) {
+            dc.setColor(Gfx.COLOR_GREEN, Gfx.COLOR_TRANSPARENT);
+            dc.drawText(dc.getWidth() / 2, dc.getHeight() * 2 / 5, Gfx.FONT_XTINY, "Tilt watch up/down", Gfx.TEXT_JUSTIFY_CENTER);
+            dc.drawText(dc.getWidth() / 2, dc.getHeight() / 2, Gfx.FONT_XTINY, "to change songs", Gfx.TEXT_JUSTIFY_CENTER);
+        }
+        
+        // Select button will still allow playing and pausing of music
+        dc.setColor(Gfx.COLOR_WHITE, Gfx.COLOR_TRANSPARENT); 
+        dc.drawText(dc.getWidth() / 2, dc.getHeight() * 7 / 10, Gfx.FONT_XTINY, "Select: play/pause", Gfx.TEXT_JUSTIFY_CENTER);
     }
     
     // Called when this View is removed from the screen. Save the
@@ -228,11 +236,11 @@ class GestureControlView extends Ui.View {
                 isWithinBounds(accelZAvg, Z_AXIS_RAISED_STATIC_DC_THRESHOLD, Z_AXIS_RAISED_STATIC_DC_THRESHOLD_ERROR) ) {
                 
                 raisedCount++;
-                state = GESTURE_RAISED_STATIC;
+                state = GESTURE_HOLD_FLAT;
             }
         }
         // Currently in "raised static" gesture state
-        else if(state == GESTURE_RAISED_STATIC) {
+        else if(state == GESTURE_HOLD_FLAT) {
         
             // Check for "tilt forward" motion
             // X-axis should remain relative stable
