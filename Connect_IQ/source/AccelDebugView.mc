@@ -188,6 +188,20 @@ class AccelDebugView extends Ui.View {
         accelZAvg = accelZSum / BUFFER_SIZE;
     }
     
+    // Resets accel data buffers back to 0 for on all axes
+    hidden function clearBuffers() {
+   
+        for(var i = 0; i < BUFFER_SIZE; i++) {
+            accelXBuffer[i] = 0;
+            accelYBuffer[i] = 0;
+            accelZBuffer[i] = 0;
+        }
+        
+        accelXBufferIndex = 0;
+        accelYBufferIndex = 0;
+        accelZBufferIndex = 0;
+    }
+    
     // Algorithm that uses the data in the accel buffers 
     static function updateGestureState() {
     
@@ -214,15 +228,24 @@ class AccelDebugView extends Ui.View {
                 (currAccelY >= Y_AXIS_TILT_FORWARD_DC_THRESHOLD) && (currAccelZ >= Z_AXIS_TILT_FORWARD_DC_THRESHOLD) ) {
                 
                 tiltForwardCount++;
-                state = GESTURE_UNKNOWN; // Reset
+                
+                // Reset
+                clearBuffers();
+                state = GESTURE_UNKNOWN;
             }
             
             // Check for "tilt back" motion
+            // X-axis should remain relative stable
+            // Y-axis should have decreased
+            // Z-axis should have increased 
             else if( isWithinBounds(accelXAvg, X_AXIS_TILT_BACKWARD_DC_THRESHOLD, X_AXIS_TILT_BACKWARD_DC_THRESHOLD_ERROR) &&
                      (currAccelY <= Y_AXIS_TILT_BACKWARD_DC_THRESHOLD) && (currAccelZ >= Z_AXIS_TILT_BACKWARD_DC_THRESHOLD) ) {
                      
                 tiltBackCount++;
-                state = GESTURE_UNKNOWN; // Reset
+                
+                // Reset
+                clearBuffers();
+                state = GESTURE_UNKNOWN;
              }
 
             // Break out this state when the thresholds are not satisified
