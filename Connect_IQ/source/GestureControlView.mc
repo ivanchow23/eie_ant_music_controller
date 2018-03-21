@@ -1,5 +1,5 @@
-// AccelDebugView.mc
-// Description: The view for showing a debug screen with accelerometer values
+// GestureControlView.mc
+// Description: The view for using gestures as music controls.
 // By: Ivan Chow
 // Date: March 18, 2018
 
@@ -13,7 +13,7 @@ enum {
     GESTURE_RAISED_STATIC = 1
 }
 
-class AccelDebugView extends Ui.View {
+class GestureControlView extends Ui.View {
 
     // Timer to take a sample
     hidden var sampleTimer;
