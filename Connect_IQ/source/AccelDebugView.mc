@@ -60,14 +60,14 @@ class AccelDebugView extends Ui.View {
     // "Tilt forward" thresholds
     const X_AXIS_TILT_FORWARD_DC_THRESHOLD       = 0;     // X-axis DC
     const X_AXIS_TILT_FORWARD_DC_THRESHOLD_ERROR = 200;   // Tolerance in X-axis (+/-)
-    const Y_AXIS_TILT_FORWARD_DC_THRESHOLD       = 500;   // Y-axis DC - needs to pass this threshold (more positive)
-    const Z_AXIS_TILT_FORWARD_DC_THRESHOLD       = -800;  // Z-axis DC - needs to pass this threshold (more positive)
+    const Y_AXIS_TILT_FORWARD_DC_THRESHOLD       = 450;   // Y-axis DC - needs to pass this threshold (more positive)
+    const Z_AXIS_TILT_FORWARD_DC_THRESHOLD       = -900;  // Z-axis DC - needs to pass this threshold (more positive)
     
     // "Tilt backward" thresholds
     const X_AXIS_TILT_BACKWARD_DC_THRESHOLD       = 0;     // X-axis DC
     const X_AXIS_TILT_BACKWARD_DC_THRESHOLD_ERROR = 200;   // Tolerance in X-axis (+/-)
-    const Y_AXIS_TILT_BACKWARD_DC_THRESHOLD       = -500;  // Y-axis DC - needs to pass this threshold (more negative)
-    const Z_AXIS_TILT_BACKWARD_DC_THRESHOLD       = -800;  // Z-axis DC - needs to pass this threshold (more positive)
+    const Y_AXIS_TILT_BACKWARD_DC_THRESHOLD       = -450;  // Y-axis DC - needs to pass this threshold (more negative)
+    const Z_AXIS_TILT_BACKWARD_DC_THRESHOLD       = -900;  // Z-axis DC - needs to pass this threshold (more positive)
 
     function initialize() {
         View.initialize();
