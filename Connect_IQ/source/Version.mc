@@ -6,8 +6,8 @@
 // Version of the application
 static class Version {
     
-    // Version 1.1.0
+    // Version 1.2.0
     public var VERSION_MAJOR = 1;
-    public var VERSION_MINOR = 1;
+    public var VERSION_MINOR = 2;
     public var VERSION_MICRO = 0;
 }
