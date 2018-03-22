@@ -323,6 +323,7 @@ static void AntChannelSM_ChannelClosing(void)
   {
     DebugPrintf( "ANT channel is closed\r\n" );
     LedOff( RED );
+    ResetSequenceNumbers();
     AntChannel_StateMachine = AntChannelSM_Idle;
   }
 }
