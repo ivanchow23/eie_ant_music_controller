@@ -11,6 +11,7 @@ enum {
     CONTROL_VIEW_TOGGLE_PLAY_PAUSE_INDEX = 0,
     CONTROL_VIEW_PREV_SONG_INDEX,
     CONTROL_VIEW_NEXT_SONG_INDEX,
+    CONTROL_VIEW_GESTURE_CONTROLS_INDEX,
     
     CONTROL_VIEW_NUM_ITEMS
 }
@@ -21,6 +22,7 @@ class ControllerView extends Ui.View {
     hidden var playPauseIconBitmap;
     hidden var prevIconBitmap;
     hidden var nextIconBitmap;
+    hidden var gestureControlIconBitmap;
 
     function initialize(refCounter) {
         View.initialize();
@@ -29,6 +31,7 @@ class ControllerView extends Ui.View {
         playPauseIconBitmap = new Ui.Bitmap( { :rezId=>Rez.Drawables.PlayPauseIcon } );
         prevIconBitmap = new Ui.Bitmap( { :rezId=>Rez.Drawables.PrevIcon } );
         nextIconBitmap = new Ui.Bitmap( { :rezId=>Rez.Drawables.NextIcon } );
+        gestureControlIconBitmap = new Ui.Bitmap( { :rezId=>Rez.Drawables.GestureIcon } );
     }
     
     // Update the view
@@ -69,6 +72,16 @@ class ControllerView extends Ui.View {
             nextIconBitmap.draw(dc);
             dc.drawText(dc.getWidth() / 2, dc.getHeight() * 7 / 10, Gfx.FONT_SMALL, "Next Song", Gfx.TEXT_JUSTIFY_CENTER);
         }  
+        
+        // Display gesture control option
+        else if(controlIndex == CONTROL_VIEW_GESTURE_CONTROLS_INDEX) {
+            var bitmapDimensions = nextIconBitmap.getDimensions();
+            
+            gestureControlIconBitmap.setLocation(getImageLocationCenteredX(dc, bitmapDimensions[0]) , getImageLocationCenteredY(dc, bitmapDimensions[1]));
+            gestureControlIconBitmap.draw(dc);
+            
+            dc.drawText(dc.getWidth() / 2, dc.getHeight() * 7 / 10, Gfx.FONT_SMALL, "Gesture Control", Gfx.TEXT_JUSTIFY_CENTER);
+        }
     }
     
     // Returns point along the X-axis which will make the image centered with the device screen
