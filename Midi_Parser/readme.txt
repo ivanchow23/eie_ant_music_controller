@@ -9,9 +9,10 @@ Usage: midi_messages.py <input midi file>
 
 Purpose: Takes a MIDI file and splits all tracks into individual MIDI files.
          This is to help listen to which track would sound suitable to be 
-         put on the EiE board.
+         put on the EiE board. Also allows an optional argument "tempo", to set
+         the tempo of the new tracks manually.
      
-Usage: midi_track_splitter.py <input midi file>
+Usage: midi_track_splitter.py <input midi file> -tempo <set tempo>
 
 -------------------------------- midi_code_gen.py --------------------------------
 

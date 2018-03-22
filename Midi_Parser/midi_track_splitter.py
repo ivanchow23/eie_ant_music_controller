@@ -11,14 +11,20 @@ import mido
 from mido import MidiFile, MidiTrack, MetaMessage
 
 # Parses the input midi file into separate MIDI tracks
-def parse_midi(mid_file):
+def parse_midi(mid_file, set_tempo):
     in_mid = MidiFile(mid_file)
     in_mid_basename = os.path.splitext(mid_file)[0]
 
-    # Find the tempo of the MIDI file
-    # Note: This is not ideal because there could be changes in tempo during the song
-    #       However, this is to try giving tracks without the tempo messages consistency with other tracks that do
-    base_tempo = find_tempo(in_mid)
+    base_tempo = 0
+    
+    if(set_tempo == 0):
+        # Find the tempo of the MIDI file
+        # Note: This is not ideal because there could be changes in tempo during the song
+        #       However, this is to try giving tracks without the tempo messages consistency with other tracks that do
+        base_tempo = find_tempo(in_mid)
+    else:
+        base_tempo = set_tempo
+        
     print('Using {} us/beat as tempo for tracks without a tempo message.\n'.format(base_tempo))
 
     # Iterate through each track in file
@@ -75,9 +81,10 @@ def has_tempo(track):
 # Parse arguments
 parser = argparse.ArgumentParser()
 parser.add_argument("mid_file", help="Input MIDI file to parse")
+parser.add_argument("-tempo", type=int, default=0, help="Tempo in us/beat")
 args = parser.parse_args()
 
 print("\nParsing: " + args.mid_file)
 
 # Parse the MIDI file
-parse_midi(args.mid_file)
+parse_midi(args.mid_file, args.tempo)
